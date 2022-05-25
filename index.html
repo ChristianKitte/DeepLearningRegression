@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Deep Learning - SS 2022</title>
+
+    <!-- Bootstrap CSS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- App CSS-->
+    <link href="css/main.css" rel="stylesheet">
+
+    <!-- d3.js -->
+    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- plotly -->
+    <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
+
+    <!-- Include Scrips for the App. -->
+    <script src="scripts/Utils.js"></script>
+    <script src="scripts/DynamicImpulseTrain.js"></script>
+    <script src="scripts/DynamicVoltageTrain.js"></script>
+    <script src="scripts/LIFNeuron.js"></script>
+    <script src="scripts/SynapticLIFNeuron.js"></script>
+    <script src="scripts/Connection.js"></script>
+    <script src="scripts/Network.js"></script>
+    <script src="scripts/DrawGraph2.js"></script>
+    <script src="scripts/Beep.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+    <!-- Seitenheader -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                Online Medieninformatik Master - Modul Deep Learning - SS 2022 - HS Emden-Leer</span>
+        </div>
+
+        <div class="container-fluid">
+            <p class="fs-5">
+                Einsendeaufgabe EA2 : Erstellen einer interaktiven Simulation eines Netzwerkes spikender
+                Neuronen auf Basis eines Leaky Integrate and Fire (LIF) Neuron.<br>
+                <a href="https://github.com/ChristianKitte/DeepLearningSpikingNeurons" target="_blank">
+                    <em>Der Sourcecode ist bei GitHub einsehbar</em>
+                </a>
+            </p>
+        </div>
+
+        <div class="simulation-config">
+            <input class="form-check-input" type="checkbox" checked id="check-playSound">
+            <label class="form-check-label" for="check-playSound">
+                Bei den Simulationen soll ein Ton für jeden Spike ausgeben werden
+            </label>
+
+        </div>
+
+    </nav>
+
+    <!-- Bootsrap Nav -->
+    <ul class="nav nav-tabs nav-fill">
+        <li class="nav-item active">
+            <a class="nav-link" href="#lösung1" data-bs-toggle="tab" aria-current="page">
+                <p class="h2">Simulation zweier LIFs</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#lösung2" data-bs-toggle="tab">
+                <p class="h2">Simulation eines LIF Netzwerkes</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#dokumentation" data-bs-toggle="tab">
+                <p class="h2">Dokumentation</p>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Content -->
+    <div class="tab-content justify-content-center d-flex">
+        <!-- Lösung1 -->
+        <div class="tab-pane fade show active" id="lösung1">
+            <div class="row">
+                <div class="row" id="info-text1">
+                    <p class="fs-5 output-text">Auf dieser Seite kann mit zwei Leaky Integrate and Fire (LIF) Neurons
+                        experimentiert werden, welche in Reihe geschaltet sind. Das erste Neuron erhält hierbei einen
+                        konfigurierbaren Eingangsstrom, welcher für die in das Neuron eintreffenden Ströme steht. Die
+                        so entstehenden Spikes befeuern das dahinter liegende zweite LIF Neuron. Im Abschnitt
+                        <strong>Dokumentation</strong> finden sie eine ausführliche Erklärung hierzu.
+                    </p>
+
+                    <ul>
+                        <li class="fs-6">
+                            Zeitdauer der Simulation - Bitte geben Sie die gesamte Zeitdauer der Simulation in ms an.
+                        </li>
+                        <li class="fs-6">
+                            Länge des Zeitschritts für die Berechnung - Nach jedem Zeitschritt in ms erfolgt eine neue
+                            Berechnung. Für 1 ms somit je Millisekunde eine Berechnung.
+                        </li>
+                        <li class="fs-6">
+                            Zeitdauer des Impulses - Wird als Stromart Impuls gewählt, bestimmt dies die Länge des
+                            Impulses in ms.
+                        </li>
+                        <li class="fs-6">
+                            Höhe des Stroms - Bei einem Impuls ist dies die Höhe bei einem Impuls, bei Zufall der
+                            maximale Stromwert in mA. Der minimale Wert beträgt immer 0 mA.
+                        </li>
+                        <li class="fs-6">
+                            Wählen Sie die Stromart - Grundsätzlich stehen zwei Arten zur Verfügung: Ein ideal gepulster
+                            oder ein zufällig generierter Strom.
+                        </li>
+                        <li class="fs-6">
+                            Widerstand zum nächsten Neuron - Hier wird der Widerstand der Verbindung beider
+                            Neuronen in Ohm festgelegt. Ein kleiner Widerstand führt zu einem hohen Strom und steht
+                            für eine starke Verbindung.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col">
+                    <div>
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-tgesamt">Zeitdauer der Simulation (0 bis 500
+                                ms)</label>
+                            <input class="form-range" id="range-tgesamt" type="range" min="0" max="500" step="1"
+                                   value="200">
+                            <p id="range-tgesamt-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-dt">Länge eines Zeitschrittes für die Berechnung
+                                (1 bis 5 ms)</label>
+                            <input class="form-range" id="range-dt" type="range" min="1" max="5" step="1"
+                                   value="1">
+                            <p id="range-dt-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-timpulse">Zeitdauer eines Impulses (0 bis 500
+                                ms)</label>
+                            <input class="form-range" id="range-timpulse" type="range" min="0" max="500" step="1"
+                                   value="50">
+                            <p id="range-timpulse-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-imax">Höhe des Stroms (0 bis 3 mA)</label>
+                            <input class="form-range" id="range-imax" type="range" min="0" max="3" step="0.001"
+                                   value="1">
+                            <p id="range-imax-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="current-type">Wählen sie die Stromart:</label>
+                            <select class="form-select" id="current-type" aria-label="Default select example">
+                                <option selected>Bitte wählen sie den Typ aus:</option>
+                                <option value="1">Impuls</option>
+                                <option value="2">Zufall</option>
+                            </select>
+                        </div>
+
+                        <!-- <div id="simulation-button-bar" class="simulation-config">
+                            <button class="btn btn-outline-primary" onclick="runSimulation()">Simulation manuell
+                                anstoßen
+                            </button>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div id="Diagramm1"></div>
+                    <div class="simulation-config">
+                        <label class="form-label" for="range-rmax">Widerstand zum nächsten Neuron (0 bis 2 Ohm)</label>
+                        <input class="form-range" id="range-rmax" type="range" min="0" max="3" step="0.001"
+                               value="1">
+                        <p id="range-rmax-value" class="range-value-string">Aktueller Wert: </p>
+                    </div>
+                    <div id="Diagramm2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lösung2 -->
+        <div class="tab-pane fade show" id="lösung2">
+            <div class="row">
+                <div class="row" id="info-text2">
+                    <p class="fs-5 output-text">Auf dieser Seite wird ein Netzwerk aus Leaky Integrate and Fire (LIF)
+                        Neuronen simuliert und ausgewertet. Verschiedene Parameter können dabei frei gewählt werden.
+                        Der Berechnungsschritt ist mit einer Millisekunde fest vorgegeben. Im Abschnitt
+                        <strong>Dokumentation</strong> finden sie eine ausführliche Erklärung hierzu.
+                    </p>
+
+                    <ul>
+                        <li class="fs-6">
+                            Anzahl der Neuronen - Die Anzahl der Neuronen, aus denen das Netz gebildet wird. Als
+                            Netzform findet ein "Ball" Anwendung, wobei jedes Neuron mit jeden anderen verbunden ist.
+                        </li>
+                        <li class="fs-6">
+                            Untere Begrenzung des Widerstandes - Gibt die untere Grenze der Verbindungswiderstände in
+                            Ohm an. Die Widerstände der Verbindungen selbst werden zufällig aus dem gegebenen Bereich
+                            ausgewählt.
+                        </li>
+                        <li class="fs-6">
+                            Obere Begrenzung des Widerstandes - Gibt die obere Grenze der Verbindungswiderstände in
+                            Ohm an. Die Widerstände der Verbindungen selbst werden zufällig aus dem gegebenen Bereich
+                            ausgewählt.
+                        </li>
+                        <li class="fs-6">
+                            Zeitdauer eines Impulses - Wird als Stromart Impuls gewählt, bestimmt dies die Länge des
+                            Impulses in ms.
+                        </li>
+                        <li class="fs-6">
+                            Minimale Höhe des Stroms - Bei einem Impuls ist dies die Höhe im Ruhezustand (kein Impuls),
+                            bei Zufall der minimale Stromwert in mA.
+                        </li>
+                        <li class="fs-6">
+                            Maximale Höhe des Stroms - Bei einem Impuls ist dies die Höhe bei einem Impuls, bei Zufall
+                            der maximale Stromwert in mA.
+                        </li>
+                        <li class="fs-6">
+                            Wählen Sie die Stromart - Grundsätzlich stehen zwei Arten zur Verfügung: Ein ideal gepulster
+                            oder ein zufällig generierter Strom.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col">
+                    <div>
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-countNeuronen">Anzahl der Neuronen (0 bis 30)</label>
+                            <input class="form-range" id="range-countNeuronen" type="range" min="0" max="30" step="1"
+                                   value="10">
+                            <p id="range-countNeuronen-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-widerstandMin">Untere Begrenzung des Widerstandes
+                                (0.001 bis 3 Ohm)</label>
+                            <input class="form-range" id="range-widerstandMin" type="range" min="0.001" max="3"
+                                   step="0.001"
+                                   value="0.3">
+                            <p id="range-widerstandMin-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-widerstandMax">Obere Begrenzung des Widerstandes
+                                (0.001 bis 3 Ohm)</label>
+                            <input class="form-range" id="range-widerstandMax" type="range" min="0.001" max="3"
+                                   step="0.001"
+                                   value="0.5">
+                            <p id="range-widerstandMax-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-tNetzImpulse">Zeitdauer eines Impulses (0 bis 500
+                                ms)</label>
+                            <input class="form-range" id="range-tNetzImpulse" type="range" min="0" max="500" step="1"
+                                   value="50">
+                            <p id="range-tNetzImpulse-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-iNetzMin">Minimale Höhe des Stroms (0 bis 3 mA)</label>
+                            <input class="form-range" id="range-iNetzMin" type="range" min="0" max="3" step="0.001"
+                                   value="1">
+                            <p id="range-iNetzMin-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="range-iNetzMax">Maximale Höhe des Stroms (0 bis 3 mA)</label>
+                            <input class="form-range" id="range-iNetzMax" type="range" min="0" max="3" step="0.001"
+                                   value="2.8">
+                            <p id="range-iNetzMax-value" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="netzCurrent-type">Wählen sie die Stromart:</label>
+                            <select class="form-select" id="netzCurrent-type" aria-label="Default select example">
+                                <option value="0" selected>Bitte wählen sie den Typ aus:</option>
+                                <option value="1">Impuls</option>
+                                <option value="2">Zufall</option>
+                            </select>
+                        </div>
+
+                        <div id="simulation-netzButton-bar" class="simulation-config">
+                            <!--<button class="btn btn-outline-primary" onclick="createNetworkGraph()">Netzwerk erzeugen
+                            </button>-->
+                            <button class="btn btn-outline-primary" onclick="startNetSimulation()">Netzwerk starten
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="stopNetSimulation()">Netzwerk stoppen
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col">
+                    <div id="box-container">
+                        <p class="fs-6">Jedes Objekt stellt ein LIF Neuron des Graphen dar. Spikende Neuronen werden in
+                            rot dargestellt.</p>
+                    </div>
+                    <div>
+                        <p class="fs-6">Das Diagramm zeigt die Anzahl der Spikes je Millisekunde in einem
+                            <a href="https://en.wikipedia.org/wiki/Scatter_plot" target="_blank">
+                                Scatter Plot</a> an. Weitere Informationen zur Bedienung können Sie
+                            <a href="https://plotly.com/chart-studio-help/zoom-pan-hover-controls/#step-1-introduction"
+                               target="_blank">hier</a> erhalten. Das Diagramm bleibt hierbei über die Änderung des
+                            Netzwerkes hinaus erhalten. Erst bei einem Neuladen der Seite, wird es zurück gesetzt.
+                        </p>
+                    </div>
+                    <div id="box-Plot"></div>
+                    <div>
+                        <p class="fs-6">Der Graph zeigt das aktuell verwendete Netzwerk. Knoten stellen die LIF Neuronen
+                            dar, die Kanten die Verbindungen untereinander.</p>
+                    </div>
+                    <div id="container" class="col svg-container"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Dokumentation -->
+        <div class="tab-pane fade show" id="dokumentation">
+            <h5>
+                <strong>
+                    Verwendete Frameworks
+                </strong>
+            </h5>
+
+            <ul>
+                <li>
+                    <h6>
+                        <a href="https://getbootstrap.com/" target="_blank">Bootstrap 5</a>
+                    </h6>
+                    <p class="fs-6">
+                        Bootstrap ist ein auf HTML und CSS basierendes Frontend CSS Framework für Webseiten. Dem
+                        entsprechend fokussiert es auf das Design und Layout einer Seite sowie ihrer
+                        Oberflächenelemente und wird hierfür innerhalb dieser Anwendung verwendet.
+                    </p>
+                </li>
+                <li>
+                    <h6>
+                        <a href="https://d3js.org/" target="_blank">D3 - Data Driven Documents</a>
+                    </h6>
+                    <p class="fs-6">
+                        Bei D3 handelt es sich um eine JavaScript Bibliothek, welche zur Manipulation von
+                        HTML Dokumenten verwendet werden kann. D3 fokussiert hierbei auf die datengetriebene
+                        Darstellung von Daten und deren (interaktiven) Visualisierung.
+
+                        Auch wenn D3 bereits etwas älter ist, so ist es nach wie vor weit verbreitet, was nicht
+                        zuletzt auch an dessen Umfangreichen Funktionalität liegt. In dieser Anwendung wurde es
+                        zum Erstellen des
+                        <a href="https://en.wikipedia.org/wiki/Force-directed_graph_drawing" target="_blank">Force
+                            Directed Graphen</a>
+                        und im Hintegrund für die Seitenmanipulation verwendet.
+                        Der Einsatz von D3 gestaltet sich theoretisch in der Praxis recht einfach, jedoch ist die
+                        anfängliche Lernkurve eher als steil anzusehen.
+                    </p>
+                </li>
+                <li>
+                    <h6>
+                        <a href="https://plotly.com/javascript/" target="_blank">Plotly</a>
+                    </h6>
+                    <p class="fs-6">
+                        Plotly ist eine verbreitete Grafikbibliothek mit Schnittstellen zu verschiedenen Sprachen
+                        wie Python, R oder JavaScript. In dieser Lösung wird Plotly als leichtgewichtige, aber schnelle
+                        Lösung zum Erstellen von Scatter Plots verwendet.
+                    </p>
+                </li>
+            </ul>
+
+            <h5>
+                <strong>
+                    Umsetzung der Aufgabe
+                </strong>
+            </h5>
+
+            <p class="fs-6">Die hier vorgestellte Umsetzung der Aufgabenstellung teilt sich in zwei einzelne Lösungen.
+                Bei der ersten Lösung handelt es sich um eine konfigurierbare Simulation zweier verbundener LIF
+                Neuronen. Die zweite Lösung beinhaltet eine Simulation zum Verhalten des LIF Neurons innerhalb eines
+                größeren Netzwerkes. Der gesamte Source Code ist frei
+                auf <a target="_blank" href="https://github.com/ChristianKitte/DeepLearningSpikingNeurons">GitHub</a>
+                verfügbar. Daher wird an dieser Stelle nicht zu tief auf den Code eingegangen.
+            </p>
+
+            <h6>
+                <strong>
+                    Leaky Integrate and Fire (LIF) Neuron
+                </strong>
+            </h6>
+
+            <p class="fs-6">Ein <strong>Leaky Integrate and Fire (LIF) Neuron</strong> zeichnet sich grundlegend dadurch
+                aus, dass mit zunehmenden Signaleingang ein Spannungspotential aufgebaut wird. Wird eine bestimmte
+                Grenzspannung (<strong>Threshold</strong>) überschritten, so kommt es seinerseits ebenfalls zu einer
+                Entladung in Form eines Impulses (<strong>Spike</strong>). Das im Neuron vorhandene Potential bricht
+                zusammen und nach einer Erholungsphase beginnt der Vorgang von neuen. Es gleicht hierbei sehr dem
+                Verhalten menschlicher Neuronen im Gehirn.
+            </p>
+
+            <p class="fs-6">Das hier verwendete Modell basiert ursprünglich vom Konzept her auf
+                die <a href="http://www.kaizou.org/2018/07/lif-neuron-tensorflow.html">hier</a> zu findende
+                Modellierung von <strong>David Corvoysier</strong> aus dem Jahr 2018. Es basiert auf der Modellierung
+                biologischer Neuronen als vereinfachte <strong>RC-Schaltung</strong>. Hierdurch kann sie mit
+                etablierten Formeln berechnet werden.
+            </p>
+
+            <p class="fs-6">Das mit Hilfe von Tensor Flow umgesetzte Modell wurde hierfür in JavaScript neu
+                implementiert und als Klasse <strong>LIFNeuron</strong> in dieser Anwendung verwendet. Insbesondere
+                wurden die Algorithmen zur Berechnung der Spannungen und Ströme übernommen. Ein Vergleich der im Lauf
+                produzierten Daten beider Umsetzungen konnte die korrekte Implementierung zeigen.
+            </p>
+
+            <p class="fs-6">Zur <strong>Vereinfachung</strong> wurden sowohl die <strong>Zeitspanne zwischen zwei
+                Spikes</strong> als auch deren <strong>Vorgängerspikes</strong> in der Modellierung nicht
+                berücksichtigt. Zudem wurde die <strong>Höhe eines Spike</strong> gleich dem Threshold gesetzt
+                und <strong>dessen Länge</strong> auf einen Berechnungsschritt. Innerhalb dieser Lösung wird bei der
+                Berechnung mit einer <strong>einheitlichen Schrittlänge</strong> von einer Millisekunde gerechnet.
+                Grundsätzlich wird zudem von <strong>idealen Impulsen</strong> ausgegangen, deren Kanten ideal und
+                nicht abgeflacht sind. Innerhalb der Ausgaben kann gleichwohl der Eindruck erweckt werden, als wenn
+                dies nicht so sei.
+            </p>
+
+            <p class="fs-6">Im Kern besteht das so umgesetzte Modell lediglich aus drei grundlegenden Funktionen, welche
+                durch eine zentrale Logik in der Funktion <strong>get_potential_op</strong> aufgerufen werden:
+            </p>
+
+            <ul>
+                <li><p class="fs-6"><strong>get_integrating_op</strong>: Generiert durch den Stromfluss einen Anstieg
+                    des Potentials
+                </p>
+                </li>
+                <li><p class="fs-6"><strong>get_firing_op</strong>: Generiert einen Spike, sofern der Grenzwert
+                    überschritten wird
+                </p>
+                </li>
+                <li><p class="fs-6"><strong>get_resting_op</strong>: Generiert eine Phase zur Regeneration</p>
+                </li>
+            </ul>
+
+            <p class="fs-6">Für den zweiten Teil der Lösung wurde die Klasse <strong>SynapticLIFNeuron</strong> Neuron
+                in die Anwendung eingeführt. Sie basiert auf der vorherigen Klasse, unterstützt jedoch als wichtigste
+                Erweiterung <strong>beliebig viele Signaleingänge</strong> sowie zusätzliche Funktionalität zur Ausgabe
+                ihres Status.
+            </p>
+
+            <h6>
+                <strong>
+                    Connection
+                </strong>
+            </h6>
+
+            <p class="fs-6">Neuronen innerhalb eines Netzwerkes müssen verbunden werden. Die Klasse
+                <strong>Connection</strong> bietet diese Funktionalität und ist in erster Linie die Beschreibung
+                zwei <strong>SynapticLIFNeuronen</strong> als zusammen gehörend. Sie repräsentiert somit die
+                Dendriten und Axone biologischer Neuronen im Gehirn.
+            </p>
+
+            <p class="fs-6">Verbindungen zwischen Neuronen in biologischen Systemen sind <strong>unterschiedlich
+                stark</strong> ausgebildet. In künstlichen Systemen wie beispielsweise einem Perzeptron geschieht
+                dies durch die Wichtung der an den Eingänge anliegenden, numerischen Werte.
+            </p>
+
+            <p class="fs-6">Dies ist hier nicht so einfach möglich. Ein <strong>LIFNeuron</strong> funktioniert durch
+                die Simulation eines Stromflusses, was zur Emittierung von Spikes führt. Ein wichtiger Punkt der hier
+                gezeigten Lösung ist daher die Transformation eines <strong>ausgehenden Spikes (Potential)</strong> zu
+                einem <strong>eingehenden Strom</strong>. Dies leistet die Klasse Connection durch das Hinzufügen
+                eines Widerstandes. Der Widerstand kann als <strong>Qualität der Verbindung</strong> zweier LIFNeuronen
+                interpretiert werden:</p>
+
+            <ul>
+                <li><p class="fs-6"><strong>Hoher Widerstand</strong>: Die Verbindung ist schlecht. Selbst ein hohe
+                    Spannung führt nur zu einem kleinen Strom.</p>
+                </li>
+                <li><p class="fs-6"><strong>Kleiner Widerstand</strong>: Die Verbindung ist gut. Selbst eine kleine
+                    Spannung führt bereits zu einem Stromfluss. Größere Spannungen verursachen größere Ströme.</p>
+                </li>
+            </ul>
+
+            <p class="fs-6">Die Höhe der durch die Verbindung fließenden Stroms errechnet sich hierbei durch das Ohm'
+                sche Gesetz. Innerhalb dieser Anwendung wird der Widerstandswert entweder fest (Lösung 1) oder zufällig
+                (Lösung 2) eingestellt. Im zweiten Fall wird aus dem vorgegebenen Bereich ein zufälliger Wert gewählt.
+            </p>
+
+            <h6>
+                <strong>
+                    Lösung 1
+                </strong>
+            </h6>
+
+            <p class="fs-6">Bei der ersten Lösung steht die Simulation eines <strong>einzelnen LIF Neurons</strong>
+                sowie zweier in Reihe geschalteter Neuronen im Vordergrund.</p>
+
+            <p class="fs-6">Hierbei erhält das erste Neuron einen <strong>konfigurierbaren Eingangsstrom</strong>,
+                welcher für die in das Neuron eintreffenden Ströme steht. Der Ausgang des Neurons ist wiederum mit
+                dem Eingang des zweiten Neurons über eine Connection verbunden. Die <strong>Spikes des ersten
+                    Neurons</strong> generieren somit einen <strong>Stromfluss in das zweite Neuron</strong>. Die Höhe
+                ist hierbei vom einstellbaren Widerstand der Connection abhängig.
+            </p>
+
+            <p class="fs-6">Grundsätzlich kann zwischen einer <strong>getakteten Stromquelle</strong> sowie einer
+                <strong>zufälligen Stromkurve</strong> gewählt werden. Insbesondere die erste Art stellt hierbei das
+                Äquivalent zu einem <strong>Spike Train</strong> dar.
+            </p>
+
+            <p class="fs-6">Auf der rechten Seite werden im <strong>oberen Graph</strong> der Strom, der
+                Spannungsverlauf sowie die Spikes des Neurons angezeigt. Wie oben beschrieben richtet sich die
+                Dauer der Ruhezeit nach den zugrundeliegenden Zeitschritten, hier eine Millisekunde. Der <strong>untere
+                    Graph</strong> zeigt des Status des zweiten Neurons.
+            </p>
+
+            <p class="fs-6">Die Simulation der Lösung 1 durchläuft bei jeder Änderung die <strong>gesamte
+                Simulation</strong> von maximal 200 ms und bringt diese neu zur Darstellung.</p>
+
+            <h6>
+                <strong>
+                    Lösung 2
+                </strong>
+            </h6>
+
+            <p class="fs-6">Die zweite Lösung bietet die Simulation eines <strong>Netzwerkes aus LIF Neuronen</strong>.
+                Im Gegensatz zur ersten Lösung läuft die Simulation nach ihren Start für eine unbestimmte Zeit fort,
+                kann aber auch pausiert oder abgebrochen werden.</p>
+
+            <p class="fs-6">Änderungen an den zugrunde liegenden Werten führen zu der Erzeugung eines <strong>neuen
+                Graphen</strong> mit <strong>neuen Widerstandswerten der Verbindungen</strong>. Dies muss bei der
+                Arbeit berücksichtigt werden.
+            </p>
+
+            <p class="fs-6">Als Netzwerk wird ein Ball gewählt, wobei <strong>jedes Neuron mit jedem anderen Neuron
+                verbunden</strong> ist. Die Stärke der Verbindungen wird hierbei <strong>zufällig</strong> festgelegt.
+                Grundsätzlich kann auch hier zwischen einer getakteten Stromquelle sowie einer zufälligen Stromkurve
+                gewählt werden.
+            </p>
+
+            <p class="fs-6">Auf der rechten Seite werden verschiedene Ausgaben zur Netzaktivität ausgegeben. Als erstes
+                erfolgt für jedes Neuron eine eigene <strong>Visualisierung als abgerundete Box</strong>. Bei laufender
+                Simulation erscheinen die beteiligten Neuronen <strong>grün</strong>, <strong>rot im Falle eines
+                    Spikes</strong>.
+            </p>
+
+            <p class="fs-6">In dem darunter liegenden Diagramm wird die <strong>Anzahl der spikenden Neuronen je
+                Zeitschritt (1 ms)</strong> eingetragen. Das Diagramm bietet Platz für 20 Sekunden und somit 20.000
+                Einträgen. Während der Simulation ist die so entstehende Auswertung nur wenig aussagekräftig. Erst
+                nach Abschluss der Simulation zeigt sich deren Nutzen, da sie <strong>erhalten bleibt</strong> und
+                somit im Nachgang analysiert werden kann. Hierfür bieten die Diagramme von
+                <a href="https://plotly.com/chart-studio-help/zoom-pan-hover-controls/#step-1-introduction">Plotly</a>
+                nativ eine Reihe von Möglichkeiten.
+            </p>
+
+            <p class="fs-6">Als letzte Ausgabe wird der <strong>Graph des Netzwerkes</strong> ausgegeben, um eine
+                Vorstellung der Komplexität zu erhalten. In der aktuellen Lösung verfügt der Graph über keine
+                nennenswerte Interaktivität, ist jedoch hierfür vorbereitet.
+            </p>
+
+            <h5>
+                <strong>
+                    Ergebnisse
+                </strong>
+            </h5>
+
+            <p class="fs-6">Auch bei einer vereinfachten Modellierung lassen sich aus der Beschäftigung mit den
+                Simulationen eine Reihe an Erkenntnissen gewinnen.
+            </p>
+
+            <h6>
+                <strong>
+                    Strom
+                </strong>
+            </h6>
+
+            <p class="fs-6">Für die <strong>erste Lösung</strong> soll hier auf Beobachtungen zum Verhalten bei
+                <strong>Strom- und Widerstandänderungen</strong> eingegangen werden. <strong>Hohe Ströme führen
+                    zu einer hohen Spikefolge</strong>, also tendenziell zu einem <strong>Spike Train mit eher
+                    dich zusammen liegenden Spikes</strong>. Die folgende Grafik zeigt die Ausgabe eines Neurons
+                bei einem gepulsten Strom vom 1,304 mA:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-05-46-image.png">
+
+            <p class="fs-6">Im Vergleich die Ausgabe bei einem Strom von 0,986 mA:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-07-19-image.png">
+
+            <p class="fs-6">In den folgenden <strong>drei Grafiken</strong> ist die Ausgabe des <strong>zweiten in
+                Reihe geschalteten Neurons</strong> zu sehen. Hierbei wurde bei <strong>konstanter
+                Eingangsspannung</strong> von 0,986 mA (<em>obiges Diagramm</em>) lediglich der <strong>Widerstand
+                verändert</strong>. Für einen relativ hohen Widerstand von 0,669 Ohm, der für eine "<em>schlechte</em>"
+                Verbindung steht, zeigt sich ein <strong>langsames Aufschaukeln des Neurons</strong>, jedoch noch
+                <strong>kein Spiken</strong>:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-08-58-image.png">
+
+            <p class="fs-6">Wird der zu Grunde liegende Widerstand auf 0,475 Ohm <strong>verringert</strong>, was einer
+                <em>stärkeren</em> Verbindung der beiden Neuronen entspricht, so <strong>spikt das Neuron</strong> mit
+                einer <strong>kleineren Frequenz</strong> als Reaktion auf den nunmehr größeren Strom:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-09-42-image.png">
+
+            <p class="fs-6">Wird im weiteren Verlauf der Widerstand nochmals auf dann 0,038 Ohm
+                <strong>verringert</strong>, so stellt man eine <strong>sehr hohe Korrelation beim Spiken</strong>
+                fest. Beide Neuronen feuern zusammen:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-10-22-image.png">
+
+            <h6>
+                <strong>
+                    Anzahl spikender Neuronen
+                </strong>
+            </h6>
+
+            <p class="fs-6">Bei der <strong>zweiten Lösung</strong> möchte ich den Fokus auf den <strong>Einfluss der
+                Anzahl der Neuronen</strong> sowie der <strong>Stromstärke</strong> beim <strong>Anlaufen des
+                Netzes</strong> legen. Zu berücksichtigen ist hierbei, dass bei einer Änderung des Anzahl an Neuronen
+                oder der Widerstände das Netz <strong>neu</strong> erstellt und die Verbindungen mit <strong>neuen und
+                    zufälligen</strong> Widerstandswerten belegt wird. Umso erstaunlicher sind die Ergebnisse.
+            </p>
+
+            <p class="fs-6">Zunächst soll der <strong>Einfluss der Anzahl an Neuronen</strong> untersucht werden. Der
+                erste betrachtete Verlauf erfolgt mit den folgenden Parametern: <em>25 Neuronen, Widerstand von 0,166
+                    Ohm bis 2,698 Ohm, Stromart: Puls mit einer Pulslänge von 432 ms, Stromstärke zwischen 2,677 mA
+                    und 3 mA</em>:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-47-46-image.png">
+
+            <p class="fs-6">Es ist zu erkennen, dass das Netz <strong>schnell an Aktivität</strong> gewinnt, um nach
+                einer Zeit einen <strong>periodischen Verlauf</strong> zu zeigen.
+            </p>
+
+            <p class="fs-6">Im nächsten Versuch wurden die Anzahl der Neuronen bei <strong>gleicher Stromstärke</strong>
+                auf fünf reduziert. Die Parameter hierbei sind: <em>5 Neuronen, Widerstand von 0,166 Ohm bis 2,698 Ohm,
+                    Stromart: Puls mit einer Pulslänge von 432 ms, Stromstärke zwischen 2,677 mA und 3 mA</em>:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-50-06-image.png">
+
+            <p class="fs-6">Es zeigt sich, dass zwar <strong>zügig Aktivität</strong> vorhanden ist und Neuronen spiken,
+                der Graph jedoch <strong>keinen periodischen</strong> Verlauf zu haben scheint. Eine <strong>zu
+                    beweisende These</strong> ist, dass <em>größere Netzwerke ausgeglichener arbeiten, kleinere
+                    eher zu einem sprunghaften Verhalten neigen</em>.
+            </p>
+
+            <p class="fs-6">Als nächstes soll der <strong>Einfluss der Stromstärke</strong> näher untersucht werden. In
+                einer erste Simulation wird die Stromstärke zwischen 1mA und 1,503 mA geschaltet. Die Parameter sind:
+                <em>30 Neuronen, Widerstand von 0,192 Ohm bis 2,525 Ohm, Stromart: Puls mit einer Pulslänge von 44 ms,
+                    Stromstärke zwischen 1 mA und 1,503 mA</em>:
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-55-57-image.png">
+
+            <p class="fs-6">Zu erkennen ist die <strong>relativ große Zeitspanne</strong>, bis es zu einem ersten Pulsen
+                kommt, das sich <strong>zunächst langsam</strong>, dann <strong>Explosionsartig</strong> ausweitet um
+                dann wieder in einen <strong>periodischen Verlauf</strong> über zu gehen. Eine <strong>Analogie</strong>
+                währe <em>eine nur kleine Aktivität, welche jedoch regelmäßig auftaucht. Erst mit der Zeit gewinnt sie
+                    an Einfluss</em>.
+            </p>
+
+            <p class="fs-6">Wird der Strom, oder in der Analogie die Aktivität <strong>stärker</strong>, wirkt sie
+                <strong>schneller</strong> auf das Netz ein. Das folgende Diagramm entstand mit den folgenden
+                Parametern: <em>30 Neuronen, Widerstand von 0,192 Ohm bis 2,525 Ohm, Stromart: Puls mit
+                    einer Pulslänge von 44 ms, Stromstärke zwischen 1 mA und 2,514 mA</em>
+            </p>
+
+            <img class="img-thumbnail" data-align="center" alt="" title="" src="assets/2022-05-19-19-59-15-image.png">
+
+            <p class="fs-6">Zu sehen ist, dass das Netz <strong>sehr schnell aktiviert wird</strong>, und <strong>nach
+                kurzer Zeit einen periodischen Verlauf</strong> annimmt. Eine <strong>zu beweisende These</strong> ist,
+                dass <em>in einen biologischen System Aufmerksamkeit zu einer höheren Aktivität führt, welche wiederum
+                    schneller auf das neuronale Netz wirkt</em>. Aus den oben gezeigten Verläufen für die erste Lösung
+                konnte bereits entnommen werden, dass <strong>hohe Ströme</strong> die <strong>Anzahl der Spikes
+                    vergrößern</strong>. Dies kann als eine Ursache für den Verlauf angenommen werden.
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript-->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+        crossorigin="anonymous"></script>
+
+<!-- Eigene JavaScripte -->
+<script src="scripts/RangeValues.js"></script>
+<script src="scripts/NetworkGraph.js"></script>
+<script src="scripts/DrawBoxGraph.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+
+</html>
