@@ -15,11 +15,10 @@ Informatics**
 
 ### Einsendeaufgabe EA3 : Regression Lernen mit feed-forward Neural Network (FFNN) als Model und TensorFlow.js (TFJS) als Framework/API.
 
-Nutzen Sie ein feed-forward neural Network (FFNN) zur Regression der reellwertigen Funktion:  y(x) = (x+0.8)*(x-0.2)*(x-0.3)*(x-0.6) im Wertebereich [-1,+1]. 
+Mit einem feed-forward neural Network (FFNN) soll eine Regression der reellwertigen Funktion: y(x) = (x+0.8) * (x-0.2) * (x-0.3) * (x-0.6) im Wertebereich [-1,+1] 
+durchgeführt werden. 
 
-Zum Erzeugen der Trainingsdaten samplen Sie N zufällige, gleich-verteilte x Werte (mit N= 5, 10, 20, 50, 100) aus dem Intervall [-1,+1] (keine Normalverteilung für die x-Werte) und berechnen dazu y(x).
-
-Dann verrauschen Sie die Trainingsdaten künstlich. Dazu addieren Sie zu y(x) normal-verteiles Rauchen (Gaussian Noise) mit einer Varianz von entweder 0.1 oder 0.3. 
+Zum Erzeugen der Trainingsdaten sollen N zufällige, gleich-verteilte x Werte (mit N= 5, 10, 20, 50, 100) aus dem Intervall [-1,+1] (keine Normalverteilung für die x-Werte) erzeugt und dazu y(x) berechnet werden. Zum Verrauschen wird dem Funktionswert ein normal-verteiles Rauchen (Gaussian Noise) mit einer Varianz von entweder 0.1 oder 0.3 hinzugefügt. 
 
 [zur Webseite](https://deep-learning.ckitte.de/ea3/)
 
