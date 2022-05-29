@@ -1,0 +1,24 @@
+#lösung {
+    margin-top: 10px;
+    width: 90%;
+}
+
+#dokumentation {
+    margin-top: 25px;
+    width: 90%;
+}
+
+.dokutext {
+    margin-left: 10px;
+}
+
+.output-text {
+    margin-top: 1em;
+}
+
+#info-text1, #info-text2 {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    background-color: khaki;
+}
