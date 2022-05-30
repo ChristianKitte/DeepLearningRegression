@@ -5,3 +5,7 @@ https://zephyrnet.com/de/Datenerweiterung-Verwendung-von-Deep-Learning-bei-begre
 
 https://scientistcafe.com/ids/feedforward-neural-network.html
 https://training.galaxyproject.org/training-material/topics/statistics/tutorials/FNN/tutorial.html
+
+
+https://www.learnwithjason.dev/blog/keep-async-await-from-blocking-execution
+https://www.freecodecamp.org/news/javascript-foreach-how-to-loop-through-an-array-in-js/

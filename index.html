@@ -41,9 +41,14 @@
                 Einsendeaufgabe EA3 : Mit einem feed-forward neural Network (FFNN) soll eine Regression
                 der reellwertigen Funktion: y(x) = (x+0.8) * (x-0.2) * (x-0.3) * (x-0.6) im Wertebereich
                 [-1,+1] durchgeführt werden.<br>
+            </p>
+            <p class="fs-5">
                 <a href="https://github.com/ChristianKitte/DeepLearningRegression" target="_blank">
                     <em>Der Sourcecode ist bei GitHub einsehbar</em>
                 </a>
+            </p>
+            <p id="on-load-string" class="fs-5 on-load-pending">
+                Daten werden geladen...
             </p>
         </div>
     </nav>
@@ -52,7 +57,7 @@
     <ul class="nav nav-tabs nav-fill">
         <li class="nav-item active">
             <a class="nav-link" href="#lösung1" data-bs-toggle="tab" aria-current="page">
-                <p class="h2">Hilfsfunktionen</p>
+                <p class="h2">Übersicht über die Daten</p>
             </a>
         </li>
         <li class="nav-item">
@@ -73,15 +78,64 @@
         <div class="tab-pane fade show active" id="lösung1">
             <div class="row">
                 <div class="row" id="info-text1">
-                    <p class="fs-5 output-text">Hilfsfunktionen
+                    <p class="fs-5 output-text">
+                        In diesen Bereich wird ein Überblick über die zugrunde liegenden Daten dieser Aufgabe gegeben.
+                        Bei dem Training werden N = 5, 10, 20, 50 und 100 gleichverteilte Datensätze (keine
+                        Normalverteilung) als x-Werte jeweils neu gezogen. Es handelt sich also nicht um reduzierte
+                        Daten einer einzelnen Ziehung.
+                    </p>
+                    <p class="fs-5 output-text">
+                        Die X-Werte dienen als Feature der Regression. Die berechneten Werte entsprechen den
+                        dazugehörigen Labels. Zusätzlich wurden den Labels ein normalverteiltes Rauschen mit wahlweiser
+                        Standardabweichung von 0,1 bzw. 0,5 hinzugefügt (Mittelwert = 0).
+                    </p>
+                    <p class="fs-5 output-text">
+                        Als Generatoren kamen für die gleichverteilten Features
+                        <a href="https://rechneronline.de/zufallszahlen/" target="_blank">rechneronline.de</a> und für
+                        das Rauschen
+                        <a href="https://statologie.de/normalverteilungsdatensatz-generator/" target="_blank">statologie.de</a>
+                        zum Einsatz.
                     </p>
                 </div>
 
-                <div class="col">
+                <div class="row dataset-main-row">
+                    <div class="col" id="datasetDropDown">
+                        <div class="simulation-config">
+                            <label class="form-label" for="dataset">
+                                Wählen sie ein Sample aus:
+                            </label>
+                            <select class="form-select" id="dataset" aria-label="Default select example">
+                                <option selected>Bitte wählen sie einen Datensatz aus:</option>
+                                <option value="1">5 Datensätze</option>
+                                <option value="2">10 Datensätze</option>
+                                <option value="3">20 Datensätze</option>
+                                <option value="4">50 Datensätze</option>
+                                <option value="5">100 Datensätze</option>
+                            </select>
+                        </div>
+                        <p class="fs-5">
+                            Das Ausgewählte DataSet wird bei den weiteren Versuchen zur Regression als
+                            Basis dienen. Hierdurch können Rückschlüsse zur Auswirkung der Datenqualität beim
+                            Trainieren mit einem neuronalen Netz gezogen werden.
+                        </p>
+                    </div>
+                    <div class=" col dataset-graph" id="dataSetGraphFunction">
+                    </div>
                 </div>
 
-                <div class="col">
+                <div class="row dataset-main-row">
+                    <div class="col dataset-graph" id="dataSetGraphNoise01">
+                    </div>
+                    <div class="col dataset-graph" id="dataSetGraphFunctionNoise01">
+                    </div>
                 </div>
+                <div class="row dataset-main-row">
+                    <div class="col dataset-graph" id="dataSetGraphNoise03">
+                    </div>
+                    <div class="col dataset-graph" id="dataSetGraphFunctionNoise03">
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -89,15 +143,14 @@
         <div class="tab-pane fade show" id="lösung2">
             <div class="row">
                 <div class="row" id="info-text2">
-                    <p class="fs-5 output-text">Mit einem feed-forward neural Network (FFNN) soll eine Regression der
-                        reellwertigen Funktion: y(x) = (x+0.8) * (x-0.2) * (x-0.3) * (x-0.6) im Wertebereich [-1,+1]
-                        durchgeführt werden.
-
-                        Zum Erzeugen der Trainingsdaten sollen N zufällige, gleich-verteilte x Werte
-                        (mit N= 5, 10, 20, 50, 100) aus dem Intervall [-1,+1] (keine Normalverteilung für die x-Werte)
-                        erzeugt und dazu y(x) berechnet werden. Zum Verrauschen wird dem Funktionswert ein
-                        normal-verteiles Rauchen (Gaussian Noise) mit einer Varianz von entweder 0.1 oder 0.3
-                        hinzugefügt. Im Abschnitt <strong>Dokumentation</strong> finden sie eine ausführliche
+                    <p class="fs-5 output-text">
+                        Mit den im lnken Reiter eingestellten Dataset kann an dieser
+                        Stelle ein feed-forward neural Network (FFNN) trainiert werden.
+                        Das Ziel ist hierbei eine Regression der reellwertigen Funktion:
+                        y(x) = (x+0.8) * (x-0.2) * (x-0.3) * (x-0.6) im Wertebereich [-1,+1].
+                    </p>
+                    <p class="fs-5 output-text">
+                        Im Abschnitt <strong>Dokumentation</strong> finden sie eine ausführliche
                         Erklärung hierzu.
                     </p>
 
@@ -166,6 +219,8 @@
                         Lösung zum Erstellen von Scatter Plots verwendet.
                     </p>
                 </li>
+
+                Danfo.js?
             </ul>
 
             <h5>
@@ -202,6 +257,9 @@
 <!-- App Scrips -->
 <script src="./scripts/Konfiguration.js"></script>
 <script src="./scripts/DataSetProvider.js"></script>
+
+<script src="./scripts/DrawGraph.js"></script>
+<script src="./scripts/UIHandler.js"></script>
 <script src="./scripts/main.js"></script>
 
 </body>

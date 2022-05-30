@@ -1,4 +1,5 @@
 https://rechneronline.de/zufallszahlen/
+https://statologie.de/normalverteilungsdatensatz-generator/
 
 daten:
 Mindestwert = -1, Höchstwert = +1 <> [-1,+1]

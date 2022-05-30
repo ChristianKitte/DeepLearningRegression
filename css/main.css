@@ -22,3 +22,35 @@
     border-radius: 10px;
     background-color: khaki;
 }
+
+.simulation-config {
+    margin-bottom: 20px;
+}
+
+.dataset-main-row {
+    padding: 10px;
+    margin: 5px;
+    width: 100%;
+    align-content: center;
+}
+
+#datasetDropDown {
+    align-content: center;
+    margin-bottom: 20px;
+}
+
+.dataset-graph {
+    border-color: darkgrey;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 10px;
+    margin: 5px;
+}
+
+.on-load-pending {
+    color: red;
+}
+
+.on-load-done {
+    color: green;
+}
