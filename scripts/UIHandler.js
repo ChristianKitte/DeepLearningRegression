@@ -23,6 +23,8 @@ dataSetDropDow.onchange = function (event) {
     labelArray01 = [];
     labelArray03 = [];
 
+    let infoString = document.getElementById("on-load-string");
+
     if (this.value === "1") { // 5
         DATA_SET_05.forEach(function (item) {
             featureArray.push(item.feature);
@@ -32,6 +34,9 @@ dataSetDropDow.onchange = function (event) {
             labelArray01.push(item.label + item.r01);
             labelArray03.push(item.label + item.r03);
         });
+
+        currentDataSet = DATA_SET_05;
+        infoString.textContent = "DataSet 05 wurden geladen";
     } else if (this.value === "2") { // 10
         DATA_SET_10.forEach(function (item) {
             featureArray.push(item.feature);
@@ -41,6 +46,9 @@ dataSetDropDow.onchange = function (event) {
             labelArray01.push(item.label + item.r01);
             labelArray03.push(item.label + item.r03);
         });
+
+        currentDataSet = DATA_SET_10;
+        infoString.textContent = "DataSet 10 wurden geladen";
     } else if (this.value === "3") { // 20
         DATA_SET_20.forEach(function (item) {
             featureArray.push(item.feature);
@@ -50,6 +58,9 @@ dataSetDropDow.onchange = function (event) {
             labelArray01.push(item.label + item.r01);
             labelArray03.push(item.label + item.r03);
         });
+
+        currentDataSet = DATA_SET_20;
+        infoString.textContent = "DataSet 20 wurden geladen";
     } else if (this.value === "4") { // 50
         DATA_SET_50.forEach(function (item) {
             featureArray.push(item.feature);
@@ -59,6 +70,9 @@ dataSetDropDow.onchange = function (event) {
             labelArray01.push(item.label + item.r01);
             labelArray03.push(item.label + item.r03);
         });
+
+        currentDataSet = DATA_SET_50;
+        infoString.textContent = "DataSet 50 wurden geladen";
     } else if (this.value === "5") { // 100
         DATA_SET_100.forEach(function (item) {
             featureArray.push(item.feature);
@@ -68,6 +82,9 @@ dataSetDropDow.onchange = function (event) {
             labelArray01.push(item.label + item.r01);
             labelArray03.push(item.label + item.r03);
         });
+
+        currentDataSet = DATA_SET_100;
+        infoString.textContent = "DataSet 100 wurden geladen";
     }
 
     DrawGraph("dataSetGraphFunction", "Funktionswerte der Rohdaten", featureArray, labelArray);

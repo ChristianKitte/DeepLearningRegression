@@ -1,4 +1,9 @@
 /**
+ * Das aktuell gültige DataSet
+ * @type {*[]}
+ */
+let currentDataSet = [];
+/**
  * Dataset mit 5 Datensätzen als {feature, label}
  * @type {*[]}
  */
@@ -58,11 +63,5 @@ async function getDataSet(file, array) {
                 infoString.textContent = "Daten wurden geladen";
             }
         });
-
-        x();
     });
-}
-
-function x() {
-    let s = 1;
 }

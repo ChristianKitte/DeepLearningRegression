@@ -24,6 +24,7 @@
     <!-- Include Tensorflow. -->
     <!-- https://js.tensorflow.org/api/latest/ -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
 </head>
 
 <body>
@@ -57,7 +58,7 @@
     <ul class="nav nav-tabs nav-fill">
         <li class="nav-item active">
             <a class="nav-link" href="#lösung1" data-bs-toggle="tab" aria-current="page">
-                <p class="h2">Übersicht über die Daten</p>
+                <p class="h2">Übersicht und Datenauswahl</p>
             </a>
         </li>
         <li class="nav-item">
@@ -86,8 +87,8 @@
                     </p>
                     <p class="fs-5 output-text">
                         Die X-Werte dienen als Feature der Regression. Die berechneten Werte entsprechen den
-                        dazugehörigen Labels. Zusätzlich wurden den Labels ein normalverteiltes Rauschen mit wahlweiser
-                        Standardabweichung von 0,1 bzw. 0,5 hinzugefügt (Mittelwert = 0).
+                        dazugehörigen Labels. Zusätzlich kann den Labels ein normalverteiltes Rauschen mit
+                        Standardabweichung von Wahlweise 0,1 bzw. 0,5 hinzugefügt (Mittelwert = 0).
                     </p>
                     <p class="fs-5 output-text">
                         Als Generatoren kamen für die gleichverteilten Features
@@ -102,7 +103,7 @@
                     <div class="col" id="datasetDropDown">
                         <div class="simulation-config">
                             <label class="form-label" for="dataset">
-                                Wählen sie ein Sample aus:
+                                Wählen Sie ein Sample aus:
                             </label>
                             <select class="form-select" id="dataset" aria-label="Default select example">
                                 <option selected>Bitte wählen sie einen Datensatz aus:</option>
@@ -117,6 +118,9 @@
                             Das Ausgewählte DataSet wird bei den weiteren Versuchen zur Regression als
                             Basis dienen. Hierdurch können Rückschlüsse zur Auswirkung der Datenqualität beim
                             Trainieren mit einem neuronalen Netz gezogen werden.
+                        </p>
+                        <p class="fs-5">
+                            Oben rechts sehen Sie, welches DataSet aktuell ausgewählt und geladen wurde.
                         </p>
                     </div>
                     <div class=" col dataset-graph" id="dataSetGraphFunction">
@@ -158,9 +162,12 @@
                 </div>
 
                 <div class="col">
+                    <button onclick="run();">Run</button>
                 </div>
 
                 <div class="col">
+                    <div id="a"></div>
+                    <div id="b"></div>
                 </div>
 
             </div>
@@ -256,6 +263,7 @@
 
 <!-- App Scrips -->
 <script src="./scripts/Konfiguration.js"></script>
+<script src="scripts/Utilsl.js"></script>
 <script src="./scripts/DataSetProvider.js"></script>
 
 <script src="./scripts/DrawGraph.js"></script>
