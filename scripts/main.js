@@ -5,14 +5,14 @@ async function run() {
         let featureTensor = tf.tensor(shuffled.features);
         let labelTensor = tf.tensor(shuffled.labels);
 
-        featureTensor.print();
-        labelTensor.print();
+        //featureTensor.print();
+        //labelTensor.print();
 
         let normalizedfeatures = normalizeTensor(featureTensor);
         let normalizedLabels = normalizeTensor(labelTensor);
 
-        normalizedfeatures.print();
-        normalizedLabels.print();
+        //normalizedfeatures.print();
+        //normalizedLabels.print();
 
         const model = createModel();
 
@@ -36,7 +36,7 @@ async function run() {
 
                 tfvis.render.scatterplot(document.getElementById("c"), data);
 
-                //testModel(model, featureTensor, normalizedLabels);
+                testModel(model, normalizedfeatures, normalizedLabels);
             }
         );
     } else {
@@ -69,13 +69,13 @@ function createModel() {
 
 async function trainModel(model, inputs, labels) {
     model.compile({
-        optimizer: tf.train.sgd(0.001),
+        optimizer: tf.train.adam(0.0001),//  tf.train.sgd(0.001),
         loss: "meanSquaredError",
         metrics: [tf.metrics.meanAbsoluteError]
     });
 
-    let batchSize = 32;
-    let epochs = 100;
+    let batchSize = 10;
+    let epochs = 400;
 
     return await model.fit(inputs, labels, {
         batchSize,
@@ -91,8 +91,13 @@ async function trainModel(model, inputs, labels) {
 
 function testModel(model, inputs, labels) {
     const xs = tf.linspace(0, 1, 100);
-    const preds = model.predict(xs.reshape([100, 1]));
+    const preds = model.predict(inputs);
 
+    inputs.print();
+    labels.print();
+    preds.print();
+
+    /*
     const predictedPoints = {
         x: xs,
         y: preds[1]
@@ -107,4 +112,6 @@ function testModel(model, inputs, labels) {
             height: 300
         }
     );
+
+     */
 }
