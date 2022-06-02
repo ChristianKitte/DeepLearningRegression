@@ -53,3 +53,14 @@ function normalizeTensor(inputTensor) {
 
     return inputTensor.sub(min).div(max.sub(min));
 }
+
+/**
+ * Denormalisiert den übergebenen Tensor mit min-max-scaling
+ * @param inputTensor Der zu denormalisierende Tensor
+ * @param min Der bei der Normalisierung genutzte Minwert
+ * @param max Der bei der Normalisierung genutzte Maxwert
+ * @returns {*} Ein neuer Tensor mit den ursprünglichen Werten
+ */
+function unNormalizeTensor(inputTensor, min, max) {
+    return inputTensor.mul(max.sub(min)).add(inputMin);
+}
