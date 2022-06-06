@@ -27,11 +27,6 @@ async function trainModel(compiledModel, inputs, labels, batchSize, epochs, divI
     );
 }
 
-// Helper functions used for sampling
-function getUniformDistributedRandomNumber(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
 function testModel(trainedModel) {
     let Testdaten = [];
 

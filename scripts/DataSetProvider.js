@@ -3,70 +3,94 @@
  * @type {*[]}
  */
 let currentDataSet = [];
-/**
- * Dataset mit 5 Datensätzen als {feature, label}
- * @type {*[]}
- */
-const DATA_SET_05 = [];
-/**
- * Dataset mit 10 Datensätzen als {feature, label}
- * @type {*[]}
- */
-const DATA_SET_10 = [];
-/**
- * Dataset mit 20 Datensätzen als {feature, label}
- * @type {*[]}
- */
-const DATA_SET_20 = [];
-/**
- * Dataset mit 50 Datensätzen als {feature, label}
- * @type {*[]}
- */
-const DATA_SET_50 = [];
-/**
- * Dataset mit 100 Datensätzen als {feature, label}
- * @type {*[]}
- */
-const DATA_SET_100 = [];
-
-getDataSet("DataSet5.csv", DATA_SET_05);
-getDataSet("DataSet10.csv", DATA_SET_10);
-getDataSet("DataSet20.csv", DATA_SET_20);
-getDataSet("DataSet50.csv", DATA_SET_50);
-getDataSet("DataSet100.csv", DATA_SET_100);
 
 /**
- * Füllt das übergebene Array mit den Werten der CSV Datei. Es wird ein mit semikolon getrenntes Array mit einem
- * Komma als Dezimalzeichen und ohne Punkt als Tausendertrennzeichen erwartet.
- * @param file Die zu verwendende CSV Datei
- * @param array Das zu füllende Array
- * @returns {Promise<void>}
+ * Erzeugt auf Basis des aktuellen DataSet den feature und label Tensor. Zudem eine normalisierte Version
+ * mit den genutzten Min und Max Werten.
+ * @returns {*}
  */
-async function getDataSet(file, array) {
-    const ds = tf.data.csv(LOCAL_DATA + file, {
-            delimiter: ";"
-        }
-    );
+function getData() {
+    return tf.tidy(() => {
+        // Durchmischen, trennen des DataSets
+        const shuffled = getShuffledFeatureAndLabelColumn(currentDataSet);
+        const featureTensor = tf.tensor(shuffled.features);
+        const labelTensor = tf.tensor(shuffled.labels);
 
-    const dataArray = await ds.toArray().then(result => {
-        result.forEach(function (x) {
-            array.push({
-                feature: parseFloat(x.x.toString().replace(",", ".")),
-                label: parseFloat(x.l.toString().replace(",", ".")),
-                r01: parseFloat(x.r01.toString().replace(",", ".")),
-                r03: parseFloat(x.r03.toString().replace(",", "."))
-            });
+        // Normalisieren von Features und Labels
+        const normalisierungFeatures = normalizeTensor(featureTensor);
+        const normalizedFeatures = normalisierungFeatures.normierterTensor;
+        const minFeature = normalisierungFeatures.min;
+        const maxFeature = normalisierungFeatures.max;
 
-            if (file === "DataSet100.csv") {
-                let infoString = document.getElementById("on-load-string");
-                infoString.classList.replace("on-load-pending", "on-load-done");
-                infoString.textContent = "Daten wurden geladen";
+        const normalisierungLabels = normalizeTensor(labelTensor);
+        const normalizedLabels = normalisierungLabels.normierterTensor;
+        const minLabels = normalisierungLabels.min;
+        const maxLabels = normalisierungLabels.max;
 
-                // Set predefined DataSet
-                document.getElementById("dataset").selectedIndex = 0;
-                document.getElementById("dataset").selectedIndex = PREDEFINED_DATASET_INDEX;
-                document.getElementById("dataset").dispatchEvent(new Event('change'));
-            }
-        });
+        return workDataSet = {
+            featureTensor: featureTensor,
+            labelTensor: labelTensor,
+            //normalisierungFeatures: normalisierungFeatures,
+            normalizedFeatures: normalizedFeatures,
+            minFeature: minFeature,
+            maxFeature: maxFeature,
+            //normalisierungLabels: normalisierungLabels,
+            normalizedLabels: normalizedLabels,
+            minLabels: minLabels,
+            maxLabels: maxLabels,
+        };
     });
 }
+
+// Helper functions used for sampling
+function getUniformDistributedRandomNumber(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function addGaussianNoise(label, mean, variance) {
+    const labelNoisy = label * Math.sqrt(variance) + mean;
+    return labelNoisy;
+}
+
+function calcSum(dataArray) {
+    let total = 0;
+
+    for (let i = 0; i < dataArray.length; i++) {
+        total += dataArray[i].label;
+    }
+
+    return total;
+}
+
+function calcMean(dataArray) {
+    let sum = calcSum(dataArray);
+    return sum / dataArray.length;
+}
+
+function getDataArrayWithNoise(dataArray, noise) {
+    const mean = calcMean(dataArray);
+
+    for (let item of dataArray) {
+        let newLabel = addGaussianNoise(item.label, mean, noise);
+        item.label = newLabel;
+    }
+
+    return dataArray;
+}
+
+function getDataArray(countNumbers) {
+    let dataArray = [];
+
+    for (let i = 0; i < countNumbers; i++) {
+        let feature = getUniformDistributedRandomNumber(-1, 1);
+        let label = (feature + 0.8) * (feature - 0.2) * (feature - 0.3) * (feature - 0.6);
+
+        dataArray.push({
+            feature: feature,
+            label: label,
+        });
+    }
+
+    return dataArray;
+}
+

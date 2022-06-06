@@ -24,7 +24,6 @@ const OVER_FITTED = {
         hiddenUnits: 0,
         useBias: true,
         activation: '',
-        Flatten: false,
         optimizerInstance: '',
         lostFunktion: '',
         metricsArray: ''
@@ -47,7 +46,6 @@ const UNDER_FITTED = {
         hiddenUnits: 0,
         useBias: true,
         activation: '',
-        Flatten: false,
         optimizerInstance: '',
         lostFunktion: '',
         metricsArray: ''
@@ -72,7 +70,6 @@ const BEST_FITTED = {
         hiddenUnits: 0,
         useBias: true,
         activation: '',
-        Flatten: false,
         optimizerInstance: '',
         lostFunktion: '',
         metricsArray: ''
@@ -86,51 +83,52 @@ const BEST_FITTED = {
     }
 };
 
-// Defnition der VAriablen
+// Defnition der Variablen
 
 /**
  * Die aktuelle Auswahl eines vordefinierten Netzes
  * @type {number}
  */
 let predefinedNet = 2;
+
 /**
  * Die Anzahl der zu verwendenden Hidden Layer
  * @type {number}
  */
 let countHiddenLayer = 1;
+
 /**
  * Die Anzahl der zu verwendenden neuronen je Layer
  * @type {number}
  */
 let countUnits = 1;
+
 /**
  * Welche Aktivierungsfunktion soll verwendet werden?
  * 1: sigmoid, 2:relu, 3:tanh
  * @type {number}
  */
 let activationSelection = 0;
+
 /**
  * Welche Verlustfunktion soll verwendet werden
  * 1: mse, 2:absolut
  * @type {number}
  */
 let lossSelection = 0;
+
 /**
  * Welcher Optimierer soll verwendet werden
  * 1: sgd, 2: momentum, 3: adam
  * @type {number}
  */
 let optimizerSelection = 0;
+
 /**
  * Die zu verwendende Lernrate beim Training
  * @type {number}
  */
 let countLearningRate = 1;
-/**
- * Gibt an, ob und wie stark das überlagerte Rauschen beim Training sein soll
- * @type {number}
- */
-let useNoise = 1;
 
 /**
  * Gibt die Größe eines Batches beim Training an
@@ -164,16 +162,6 @@ function onPredefinedChanged(value) {
     }
 }
 
-/**
- * Wird aufgerufen, sobald sich die Auswahl eines Rauschen für das Training ändert. Der Aufruf erfolgt
- * direkt aus dem HTML mit Übergabe einer Nummer.
- * (0 kein Rauschen, 1 noise mit 0,1, 2 noise mit 0,2)
- * @param value Die getroffene Auswahl
- */
-function onNoiseChanged(value) {
-    useNoise = value;
-}
-
 // Auslesen der Slider
 
 /**
@@ -194,16 +182,6 @@ d3.select('#count-neuron')
         countUnits = parseInt(+this.value);
         let txt = "Aktueller Wert: " + countUnits.toString() + " Units";
         d3.select('#count-neuron-string').text(txt);
-    });
-
-/**
- * OnInput Event Handler für countLearningRate
- */
-d3.select('#count-learningrate')
-    .on("input", function () {
-        countLearningRate = parseInt(+this.value);
-        let txt = "Aktueller Wert: " + countLearningRate.toString();
-        d3.select('#count-learningrate-string').text(txt);
     });
 
 /**
@@ -260,7 +238,6 @@ d3.select('#optimizer-type')
 function setInitialValue() {
     // Auslesen der Optiongruppen
     predefinedNet = getRadioOption("option-predefined");
-    useNoise = getRadioOption("option-noise");
 
     // Auslesen der Slider
     countHiddenLayer = parseInt(document.getElementById('count-layer').getAttribute('value'));
@@ -270,10 +247,6 @@ function setInitialValue() {
     countUnits = parseInt(document.getElementById('count-neuron').getAttribute('value'));
     let txt2 = "Aktueller Wert: " + countUnits.toString() + " Units";
     d3.select('#count-neuron-string').text(txt2);
-
-    countLearningRate = parseInt(document.getElementById('count-learningrate').getAttribute('value'));
-    let txt3 = "Aktueller Wert: " + countLearningRate.toString();
-    d3.select('#count-learningrate-string').text(txt3);
 
     countBatch = parseInt(document.getElementById('count-batch').getAttribute('value'));
     let txt4 = "Aktueller Wert: " + countBatch.toString();

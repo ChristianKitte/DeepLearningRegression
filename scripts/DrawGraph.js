@@ -3,14 +3,21 @@
  * Daten als Array übergeben.
  * @param divID Die ID eines DIV Elementes als Container
  * @param title Der Titel der Ausgabe
- * @param features Die Eingabewerte (X-Werte) der Funktion
- * @param labels Die Funktionswerte (Y-Werte) der Funktion
+ * @param dataArray Die Labels und Features als Array
  * @constructor
  */
-function DrawGraph(divID, title, features, labels) {
+function DrawGraph(divID, title, dataArray) {
+    let featureArray = [];
+    let labelArray = [];
+
+    for (let element of dataArray) {
+        featureArray.push(element.feature);
+        labelArray.push(element.label);
+    }
+
     var valuesDefinition = {
-        x: features,
-        y: labels,
+        x: featureArray,
+        y: labelArray,
         mode: "markers",
         type: 'scatter',
         name: 'Funktionswerte'

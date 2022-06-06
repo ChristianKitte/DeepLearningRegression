@@ -86,6 +86,16 @@ function printModel(divContainerId, model) {
     tfvis.show.modelSummary(document.getElementById(divContainerId), model);
 }
 
+/***
+ * Druckt eine Beschreibung des gegebenen TensorFlow Models in dem durch ID bezeichneten DIV
+ * Container aus.
+ * @param divContainerId Die ID eines DIV Containers
+ * @param modelDescription Ein Tensorflow Model
+ */
+function printModelDescription(divContainerId, modelDescription) {
+    tfvis.show.modelSummary(document.getElementById(divContainerId), modelDescription.toJSON());
+}
+
 /**
  * Liest die Optionsgruppe mit dem übergebenen ID aus und gibt den selektierten Index
  * zurück
