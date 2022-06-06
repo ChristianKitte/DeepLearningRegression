@@ -61,6 +61,11 @@ async function getDataSet(file, array) {
                 let infoString = document.getElementById("on-load-string");
                 infoString.classList.replace("on-load-pending", "on-load-done");
                 infoString.textContent = "Daten wurden geladen";
+
+                // Set predefined DataSet
+                document.getElementById("dataset").selectedIndex = 0;
+                document.getElementById("dataset").selectedIndex = PREDEFINED_DATASET_INDEX;
+                document.getElementById("dataset").dispatchEvent(new Event('change'));
             }
         });
     });

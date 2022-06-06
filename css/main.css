@@ -23,8 +23,27 @@
     background-color: khaki;
 }
 
-.simulation-config {
-    margin-bottom: 20px;
+.net-config {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    background-color: khaki;
+}
+
+.dropdown {
+    margin-bottom: 10px;
+}
+
+.option-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    width: 200px;
 }
 
 .dataset-main-row {

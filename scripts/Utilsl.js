@@ -43,15 +43,24 @@ function getShuffledFeatureAndLabelColumn(arr) {
 }
 
 /**
- * Normalisiert den übergebenen Tensor mit min-max-scaling
+ * Normalisiert den übergebenen Tensor mit min-max-scaling - inputTensor.sub(min).div(max.sub(min)) - und
+ * gibt den normierten Tensor plus das Minimum und Maximum zurück
  * @param inputTensor Der zu normalisierende Tensor
- * @returns {*} Ein neuer normalisierter Tensor
+ * @param inputTensor
+ * @returns {{normierterTensor: *, min: *, max: *}}
  */
 function normalizeTensor(inputTensor) {
-    const max = inputTensor.max();
-    const min = inputTensor.min();
+    return tf.tidy(() => {
+        const max = inputTensor.max();
+        const min = inputTensor.min();
+        const normalizedTensor = inputTensor.sub(min).div(max.sub(min));
 
-    return inputTensor.sub(min).div(max.sub(min));
+        return {
+            normierterTensor: normalizedTensor,
+            min: max,
+            max: min
+        };
+    });
 }
 
 /**
@@ -62,5 +71,46 @@ function normalizeTensor(inputTensor) {
  * @returns {*} Ein neuer Tensor mit den ursprünglichen Werten
  */
 function unNormalizeTensor(inputTensor, min, max) {
-    return inputTensor.mul(max.sub(min)).add(inputMin);
+    return tf.tidy(() => {
+        return inputTensor.mul(max.sub(min)).add(min);
+    });
+}
+
+/***
+ * Druckt eine Übersicht des gegebenen TensorFlow Models in dem durch ID bezeichneten DIV
+ * Container aus.
+ * @param divContainerId Die ID eines DIV Containers
+ * @param model Ein Tensorflow Model
+ */
+function printModel(divContainerId, model) {
+    tfvis.show.modelSummary(document.getElementById(divContainerId), model);
+}
+
+/***
+ * Druckt eine Beschreibung des gegebenen TensorFlow Models in dem durch ID bezeichneten DIV
+ * Container aus.
+ * @param divContainerId Die ID eines DIV Containers
+ * @param modelDescription Ein Tensorflow Model
+ */
+function printModelDescription(divContainerId, modelDescription) {
+    tfvis.show.modelSummary(document.getElementById(divContainerId), modelDescription.toJSON());
+}
+
+/**
+ * Liest die Optionsgruppe mit dem übergebenen ID aus und gibt den selektierten Index
+ * zurück
+ * @param id Die ID einer Optionsgruppe
+ * @returns {number} Den Index des ausgewählten Indexes oder -1;
+ */
+function getRadioOption(id) {
+    const radios = document.getElementsByName(id);
+    let index = -1;
+
+    for (let radio of radios) {
+        if (radio.checked) {
+            index = +radio.value;
+        }
+    }
+
+    return index;
 }

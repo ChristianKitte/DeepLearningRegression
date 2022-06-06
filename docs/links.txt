@@ -10,6 +10,7 @@ https://js.tensorflow.org/api/latest/
 //<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
 
 TFJS-VIS
+https://js.tensorflow.org/api_vis/latest/
 https://github.com/tensorflow/tfjs-vis/blob/master/tfjs-vis
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
 

@@ -15,14 +15,20 @@
     <!-- App CSS-->
     <link href="css/main.css" rel="stylesheet">
 
+    <!-- d3.js -->
+    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+
     <!-- Plotly. -->
     <!-- https://plotly.com/javascript/ -->
-    <script src="https://cdn.plot.ly/plotly-2.12.1.min.js">
+    <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.0/lib/bundle.min.js"></script>
+    <!-- Danfo.js -->
+    <!-- https://danfo.jsdata.org/ -->
+    <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.0/lib/bundle.min.js"></script>
 
-    <!-- Include Tensorflow. -->
+    <!-- Include Tensorflow.js und Tensorflow-vis. -->
     <!-- https://js.tensorflow.org/api/latest/ -->
+    <!-- https://js.tensorflow.org/api_vis/latest/ -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
 </head>
@@ -58,12 +64,12 @@
     <ul class="nav nav-tabs nav-fill">
         <li class="nav-item active">
             <a class="nav-link" href="#lösung1" data-bs-toggle="tab" aria-current="page">
-                <p class="h2">Übersicht und Datenauswahl</p>
+                <p class="h2">Vorauswahl des Datasets</p>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#lösung2" data-bs-toggle="tab">
-                <p class="h2">Lösung</p>
+                <p class="h2">Definition des FFNN</p>
             </a>
         </li>
         <li class="nav-item">
@@ -105,7 +111,7 @@
                             <label class="form-label" for="dataset">
                                 Wählen Sie ein Sample aus:
                             </label>
-                            <select class="form-select" id="dataset" aria-label="Default select example">
+                            <select class="form-select dropdown" id="dataset" aria-label="Default select example">
                                 <option selected>Bitte wählen sie einen Datensatz aus:</option>
                                 <option value="1">5 Datensätze</option>
                                 <option value="2">10 Datensätze</option>
@@ -133,13 +139,13 @@
                     <div class="col dataset-graph" id="dataSetGraphFunctionNoise01">
                     </div>
                 </div>
+
                 <div class="row dataset-main-row">
                     <div class="col dataset-graph" id="dataSetGraphNoise03">
                     </div>
                     <div class="col dataset-graph" id="dataSetGraphFunctionNoise03">
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -148,29 +154,205 @@
             <div class="row">
                 <div class="row" id="info-text2">
                     <p class="fs-5 output-text">
-                        Mit den im lnken Reiter eingestellten Dataset kann an dieser
+                        Mit den im linken Reiter eingestellten Dataset kann an dieser
                         Stelle ein feed-forward neural Network (FFNN) trainiert werden.
                         Das Ziel ist hierbei eine Regression der reellwertigen Funktion:
                         y(x) = (x+0.8) * (x-0.2) * (x-0.3) * (x-0.6) im Wertebereich [-1,+1].
                     </p>
                     <p class="fs-5 output-text">
+                        Hierfür kann auf dieser seite links ein Netz konfiguriert werden, oder aber
+                        eines der Vorlagen geladen werden. Zudem kann ein selbst erstelltes Netz herunter
+                        oder hoch geladen werden. Das erstellte Netz kann auf Basis des links eingestellten
+                        Datasets trainiert werden.
+                    </p>
+                    <p class="fs-5 output-text">
                         Im Abschnitt <strong>Dokumentation</strong> finden sie eine ausführliche
                         Erklärung hierzu.
                     </p>
-
-
                 </div>
 
                 <div class="col">
-                    <button onclick="run();">Run</button>
+                    <div class="net-config" id="select-predefined-ffnn">
+                        <p class="fs-6 output-text">
+                            Wählen Sie eine Vorlage für ein FFNN aus:
+                        </p>
+
+                        <div class="option-bar">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opt-fit" id="underfit-ffnn"
+                                       onchange="onPredefinedChanged(0);">
+                                <label class="form-check-label" for="underfit-ffnn">
+                                    Unterangepasstes Netz
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opt-fit" id="overfit-ffnn"
+                                       onchange="onPredefinedChanged(1);">
+                                <label class="form-check-label" for="overfit-ffnn">
+                                    Überangepasstes Netz
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opt-fit" id="bestfit-ffnn"
+                                       checked onchange="onPredefinedChanged(2);">
+                                <label class="form-check-label" for="bestfit-ffnn">
+                                    Gut angepasstes Netz
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="net-config" id="create-ffnn">
+                        <div class="simulation-config">
+                            <label class="form-label" for="count-layer">Wieviele Hidden Layer sollen verwendet werden (1
+                                bis
+                                10)?</label>
+                            <input class="form-range" id="count-layer" type="range" min="1" max="10" step="1"
+                                   value="2">
+                            <p id="count-layer-string" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="count-neuron">Wieviele Neuronen sollen je Hidden Layer
+                                verwendet
+                                werden (1 bis 50)?</label>
+                            <input class="form-range" id="count-neuron" type="range" min="1" max="50" step="1"
+                                   value="32">
+                            <p id="count-neuron-string" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config dropdown">
+                            <label class="form-label" for="activation-type">Welche Aktivierungsfunktion soll verwendet
+                                werden?</label>
+                            <select class="form-select" id="activation-type" aria-label="Default select example">
+                                <option selected>Bitte wählen sie den Typ aus:</option>
+                                <option value="1">Sigmoid</option>
+                                <option value="2">Relu</option>
+                                <option value="3">Tanh</option>
+                            </select>
+                        </div>
+
+                        <div class="simulation-config dropdown">
+                            <label class="form-label" for="loss-type">Welche Verlustfunktion soll verwendet
+                                werden?</label>
+                            <select class="form-select" id="loss-type" aria-label="Default select example">
+                                <option selected>Bitte wählen sie den Typ aus:</option>
+                                <option value="1">Mean Squared Error (MSE)</option>
+                                <option value="2">Mean Absolute Error Loss</option>
+                            </select>
+                        </div>
+
+                        <div class="simulation-config dropdown">
+                            <label class="form-label" for="optimizer-type">Welcher Optimizer soll verwendet
+                                werden?</label>
+                            <select class="form-select" id="optimizer-type" aria-label="Default select example">
+                                <option selected>Bitte wählen sie den Typ aus:</option>
+                                <option value="1">sgd</option>
+                                <option disabled="disabled" value="2">momentum</option>
+                                <option value="3">adam</option>
+                            </select>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="count-learningrate">Wie groß soll die Lernrate sein (0.1
+                                bis
+                                2.0)?</label>
+                            <input class="form-range" id="count-learningrate" type="range" min="0.1" max="2.0"
+                                   step="0.1"
+                                   value="1">
+                            <p id="count-learningrate-string" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div id="netcreation-Button-bar" class="simulation-config">
+                            <button id="create-and-build-ffnn" class="btn btn-outline-primary"
+                                    onclick="createAndBuildFFNN();">
+                                FFNN erstellen
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="net-config" id="train-ffnn">
+                        <p class="fs-6 output-text">
+                            Wählen Sie aus, op die Trainingsdaten mit einem Rauschen überlagert werden sollen:
+                        </p>
+
+                        <div id="option-noise" class="option-bar">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opt-noise" id="no-noise"
+                                       onchange="onNoiseChanged(0);">
+                                <label class="form-check-label" for="no-noise">
+                                    Kein Rauschen verwenden
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opt-noise" id="01-noise"
+                                       checked onchange="onNoiseChanged(2);">
+                                <label class="form-check-label" for="01-noise">
+                                    Rauschen mit 0,1
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opt-noise" id="02-noise"
+                                       onchange="onNoiseChanged(3);">
+                                <label class="form-check-label" for="02-noise">
+                                    Rauschen mit 0,2
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="count-batch">Wie groß soll ein Batch sein (
+                                1 bis 100)?</label>
+                            <input class="form-range" id="count-batch" type="range" min="1" max="100" step="1"
+                                   value="50">
+                            <p id="count-batch-string" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div class="simulation-config">
+                            <label class="form-label" for="count-epoch">Über wieviele Epochen soll trainiert werden
+                                (1 bis 500)?</label>
+                            <input class="form-range" id="count-epoch" type="range" min="1" max="500" step="1"
+                                   value="200">
+                            <p id="count-epoch-string" class="range-value-string">Aktueller Wert: </p>
+                        </div>
+
+                        <div id="nettrain-Button-bar" class="simulation-config">
+                            <button id="train-and-test-ffnn" class="btn btn-outline-primary"
+                                    onclick="trainAndTestFFNN();" disabled>
+                                FFNN trainieren
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="net-config" id="down-upload">
+                        <div id="download-Button-bar" class="simulation-config option-bar">
+                            <button class="btn btn-outline-primary" onclick="downloadFFNN();">
+                                FFNN herunterladen
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="uploadFFNN();">
+                                FFNN hochladen
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col">
-                    <div id="a"></div>
-                    <div id="b"></div>
-                    <div id="c"></div>
+                    <p class="fs-5 output-text">
+                        Dokumentation des erzeugten Netzes:
+                    </p>
+                    <div id="dokuNetz"></div>
+                    <p class="fs-5 output-text">
+                        Trainingsverlauf:
+                    </p>
+                    <div id="dokuTrain">
+                    </div>
+                    <div id="c">
+                    </div>
                 </div>
-
             </div>
         </div>
 
@@ -191,6 +373,32 @@
                         Bootstrap ist ein auf HTML und CSS basierendes Frontend CSS Framework für Webseiten. Dem
                         entsprechend fokussiert es auf das Design und Layout einer Seite sowie ihrer
                         Oberflächenelemente und wird hierfür innerhalb dieser Anwendung verwendet.
+                    </p>
+                </li>
+
+                <li>
+                    <h6>
+                        <a href="https://d3js.org/" target="_blank">D3 - Data Driven Documents</a>
+                    </h6>
+                    <p class="fs-6">
+                        Bei D3 handelt es sich um eine JavaScript Bibliothek, welche zur Manipulation von
+                        HTML Dokumenten verwendet werden kann. D3 fokussiert hierbei auf die datengetriebene
+                        Darstellung von Daten und deren (interaktiven) Visualisierung. In dieser Anwendung wird es
+                        jedoch primär für den einfachen Zugriff auf DOM Dokumente eingesetzt.
+                    </p>
+                </li>
+
+                <li>
+                    <h6>
+                        <a href="https://danfo.jsdata.org/" target="_blank">Danfo.js</a>
+                    </h6>
+                    <p class="fs-6">
+                        Danfo.js ist ein Open Source Framework, welches sich sehr stark an das bekannte Python
+                        Framework
+                        <a href="https://pandas.pydata.org/" target="_blank">Pandas</a>
+                        anlehnt. Hierbei versucht es, möglichst gleichartige Interfaces bereit
+                        zu stellen, um Pandas Benutzern einen einfachen Einstieg zu bieten. Einsatzgebiet ist wie
+                        bei Pandas die Vor- und Nachverarbeitung von Daten aller Art unter Javascript.
                     </p>
                 </li>
 
@@ -227,8 +435,6 @@
                         Lösung zum Erstellen von Scatter Plots verwendet.
                     </p>
                 </li>
-
-                Danfo.js?
             </ul>
 
             <h5>
@@ -269,6 +475,9 @@
 
 <script src="./scripts/DrawGraph.js"></script>
 <script src="./scripts/UIHandler.js"></script>
+<script src="scripts/ModelFactory.js"></script>
+<script src="scripts/TrainProvider.js"></script>
+<script src="scripts/ModelDescription.js"></script>
 <script src="./scripts/main.js"></script>
 
 </body>

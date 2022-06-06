@@ -94,3 +94,116 @@ dataSetDropDow.onchange = function (event) {
     DrawGraph("dataSetGraphFunctionNoise03", "Überlagerte Funktionswerte (0,3)", featureArray, labelArray03);
 };
 
+// Handle Button Clicks
+
+/**
+ * Handelt Click auf FFNN erstellen und initialisiert das Erstellen. das erstellte Model wird in
+ * currentNeuralNet gespeichert. Standardmäßig ist die Ein- und Augabe auf ein Unit beschränkt und es
+ * wird kein Flatten Layer gesetzt. Bias wird immer genutzt. Zudem wird eine Beschreibungsklassen vom
+ * Typ ModelDescription erstellt und in currentNeuralNetDescriptor gespeichert.
+ */
+function createAndBuildFFNN() {
+    currentNeuralNet = null;
+
+    const ffnn = createSimpleRawModel(
+        inputUnits = 1,
+        hiddenLayers = countHiddenLayer,
+        hiddenUnits = countUnits,
+        useBias = true,
+        activation = getActivationSelectionString(),
+        getOptimizerInstance(),
+        getLossSelectionString(),
+        getMetricsByLossSelection());
+
+    printModel("dokuNetz", ffnn);
+    currentNeuralNet = ffnn;
+
+    const ffnnDescriptor = new ModelDescription(
+        inputUnits = 1,
+        hiddenLayers = countHiddenLayer,
+        hiddenUnits = countUnits,
+        useBias = true,
+        activation = getActivationSelectionString(),
+        getOptimizerInstance(),
+        getLossSelectionString(),
+        getMetricsByLossSelection());
+
+    currentNeuralNetDescriptor = ffnnDescriptor;
+
+    document.getElementById("dokuTrain").innerHTML = "";
+    document.getElementById("train-and-test-ffnn").disabled = false;
+}
+
+function getData() {
+    return tf.tidy(() => {
+        // Durchmischen, trennen des DataSets
+        const shuffled = getShuffledFeatureAndLabelColumn(currentDataSet);
+        const featureTensor = tf.tensor(shuffled.features);
+        const labelTensor = tf.tensor(shuffled.labels);
+
+        // Normalisieren von Features und Labels
+        const normalisierungFeatures = normalizeTensor(featureTensor);
+        const normalizedFeatures = normalisierungFeatures.normierterTensor;
+        const minFeature = normalisierungFeatures.min;
+        const maxFeature = normalisierungFeatures.max;
+
+        const normalisierungLabels = normalizeTensor(labelTensor);
+        const normalizedLabels = normalisierungLabels.normierterTensor;
+        const minLabels = normalisierungLabels.min;
+        const maxLabels = normalisierungLabels.max;
+
+        return workDataSet = {
+            featureTensor: featureTensor,
+            labelTensor: labelTensor,
+            //normalisierungFeatures: normalisierungFeatures,
+            normalizedFeatures: normalizedFeatures,
+            minFeature: minFeature,
+            maxFeature: maxFeature,
+            //normalisierungLabels: normalisierungLabels,
+            normalizedLabels: normalizedLabels,
+            minLabels: minLabels,
+            maxLabels: maxLabels,
+        };
+    });
+}
+
+/**
+ * Handelt Click auf FFNN trainieren
+ */
+async function trainAndTestFFNN() {
+    if (isArrayAndFilled(currentDataSet)) {
+        createAndBuildFFNN();
+
+        // Daten auf Basis des aktuellen DataSets zusammen stellen
+        const currentData = getData();
+
+        // Trainieren des Models
+        await trainModel(currentNeuralNet,
+            currentData.normalizedFeatures,
+            currentData.normalizedLabels,
+            countBatch,
+            countEpoch,
+            "dokuTrain"
+        ).then(() => {
+                alert("Das Training wurde beendet!");
+                //testModel(currentNeuralNet, currentData.normalizedFeatures, currentData.normalizedLabels);
+            }
+        );
+    } else {
+        alert("Bitte wählen Sie ein DataSet aus!");
+    }
+}
+
+/**
+ * Handelt Click auf FFNN herunterladen
+ */
+function downloadFFNN() {
+    alert("Startet den Download des aktuellen FFNN");
+}
+
+/**
+ * Handelt Click auf FFNN hochladen
+ */
+function uploadFFNN() {
+    alert("Starte das Upload eines FFNN");
+}
