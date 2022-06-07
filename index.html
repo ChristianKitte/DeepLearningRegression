@@ -87,22 +87,10 @@
                 <div class="row" id="info-text1">
                     <p class="fs-5 output-text">
                         In diesen Bereich wird ein Überblick über die zugrunde liegenden Daten dieser Aufgabe gegeben.
-                        Für das Training wurden N = 5, 10, 20, 50 und 100 gleichverteilte Datensätze (keine
-                        Normalverteilung) als Feature gezogen. Es handelt sich hierbei jeweils um separate Ziehungen,
-                        also nicht um reduzierte Daten einer einzelnen Ziehung.
-                    </p>
-                    <p class="fs-5 output-text">
-                        Die anhand der obigen Formel berechneten Werte entsprechen den dazugehörigen Labels. Zusätzlich
-                        kann den Labels ein normalverteiltes Rauschen mit Standardabweichung von Wahlweise 0,1 bzw. 0,5
-                        hinzugefügt (Mittelwert = 0) werden.
-                    </p>
-                    <p class="fs-5 output-text">
-                        Als Generatoren kamen für die gleichverteilten Features
-                        <a href="https://rechneronline.de/zufallszahlen/" target="_blank">rechneronline.de</a> und für
-                        das Rauschen
-                        <a href="https://statologie.de/normalverteilungsdatensatz-generator/" target="_blank">statologie.de</a>
-                        zum Einsatz.
-                    </p>
+                        Für das Training können N = 5, 10, 20, 50 und 100 gleichverteilte Datensätze (keine
+                        Normalverteilung) als Feature gezogen werden. Es handelt sich hierbei immer um neue Ziehungen.
+                        Nach der Generierung der Zahlen wird zu diesen ein Rauschen mit einer Varianz von 0,3 um den
+                        Mittelwert 0 hinzugefügt.
                 </div>
 
                 <div class="row dataset-main-row">
@@ -163,36 +151,25 @@
                             Wählen Sie eine Vorlage für ein FFNN aus:
                         </p>
 
-                        <div class="option-bar">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="opt-fit" id="underfit-ffnn"
-                                       onchange="onPredefinedChanged(0);">
-                                <label class="form-check-label" for="underfit-ffnn">
-                                    Unterangepasstes Netz
-                                </label>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="opt-fit" id="overfit-ffnn"
-                                       onchange="onPredefinedChanged(1);">
-                                <label class="form-check-label" for="overfit-ffnn">
-                                    Überangepasstes Netz
-                                </label>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="opt-fit" id="bestfit-ffnn"
-                                       checked onchange="onPredefinedChanged(2);">
-                                <label class="form-check-label" for="bestfit-ffnn">
-                                    Gut angepasstes Netz
-                                </label>
-                            </div>
+                        <div class="net-config" id="predefined-buttons">
+                            <button class="btn btn-outline-primary predefine-button"
+                                    onclick="setPredefinedModel(1);">
+                                Unterangepasstes Netz
+                            </button>
+                            <button class="btn btn-outline-primary predefine-button"
+                                    onclick="setPredefinedModel(2);">
+                                Gut angepasstes Netz
+                            </button>
+                            <button class="btn btn-outline-primary predefine-button" onclick="setPredefinedModel(3);">
+                                Überangepasstes Netz
+                            </button>
                         </div>
                     </div>
 
                     <div class="net-config" id="create-ffnn">
                         <div class="simulation-config">
-                            <label class="form-label" for="count-layer">Wieviele Hidden Layer sollen verwendet werden (1
+                            <label class="form-label" for="count-layer">Wieviele Hidden Layer sollen verwendet
+                                werden (1
                                 bis
                                 10)?</label>
                             <input class="form-range" id="count-layer" type="range" min="1" max="10" step="1"
@@ -210,7 +187,8 @@
                         </div>
 
                         <div class="simulation-config dropdown">
-                            <label class="form-label" for="activation-type">Welche Aktivierungsfunktion soll verwendet
+                            <label class="form-label" for="activation-type">Welche Aktivierungsfunktion soll
+                                verwendet
                                 werden?</label>
                             <select class="form-select" id="activation-type" aria-label="Default select example">
                                 <option selected>Bitte wählen sie den Typ aus:</option>
@@ -296,7 +274,7 @@
                     </p>
                     <div id="dokuTrain">
                     </div>
-                    <div id="c">
+                    <div id="dokuTest">
                     </div>
                 </div>
             </div>
@@ -377,7 +355,8 @@
                     </h6>
                     <p class="fs-6">
                         Plotly ist eine verbreitete Grafikbibliothek mit Schnittstellen zu verschiedenen Sprachen
-                        wie Python, R oder JavaScript. In dieser Lösung wird Plotly als leichtgewichtige, aber schnelle
+                        wie Python, R oder JavaScript. In dieser Lösung wird Plotly als leichtgewichtige, aber
+                        schnelle
                         Lösung zum Erstellen von Scatter Plots verwendet.
                     </p>
                 </li>

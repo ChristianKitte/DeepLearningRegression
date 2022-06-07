@@ -1,53 +1,10 @@
-/**
- * Das DropDown Element zur Auswahl des DataSets
- * @type {HTMLElement}
- */
-let dataSetDropDow = document.getElementById("dataset");
-
-/**
- * Handelt das Event OnChange des Dropdown für die Auswahl des DataSets
- * @param event
- */
-dataSetDropDow.onchange = function (event) {
-    let infoString = document.getElementById("on-load-string");
-    let countDataArray;
-
-    if (this.value === "1") { // 5
-        countDataArray = 5;
-        infoString.textContent = "DataSet 05 wurden geladen";
-        infoString.classList.replace("on-load-pending", "on-load-done");
-    } else if (this.value === "2") { // 10
-        countDataArray = 10;
-        infoString.textContent = "DataSet 10 wurden geladen";
-        infoString.classList.replace("on-load-pending", "on-load-done");
-    } else if (this.value === "3") { // 20
-        countDataArray = 20;
-        infoString.textContent = "DataSet 20 wurden geladen";
-        infoString.classList.replace("on-load-pending", "on-load-done");
-    } else if (this.value === "4") { // 50
-        countDataArray = 50;
-        infoString.textContent = "DataSet 50 wurden geladen";
-        infoString.classList.replace("on-load-pending", "on-load-done");
-    } else if (this.value === "5") { // 100
-        countDataArray = 100;
-        infoString.textContent = "DataSet 100 wurden geladen";
-        infoString.classList.replace("on-load-pending", "on-load-done");
-    }
-
-    let dataArray = getDataArray(countDataArray);
-    let dataArrayNoisy = getDataArrayWithNoise(dataArray, 0.3);
-
-    currentDataSet = dataArrayNoisy;
-
-    DrawGraph("dataSetGraphFunction", "Funktionswerte der Rohdaten", dataArrayNoisy);
-};
-
 // Handle Button Clicks
+
 /**
- * Handelt Click auf FFNN erstellen und initialisiert das Erstellen. das erstellte Model wird in
- * currentNeuralNet gespeichert. Standardmäßig ist die Ein- und Augabe auf ein Unit beschränkt und es
- * wird kein Flatten Layer gesetzt. Bias wird immer genutzt. Zudem wird eine Beschreibungsklassen vom
- * Typ ModelDescription erstellt und in currentNeuralNetDescriptor gespeichert.
+ * Handelt Click auf FFNN - erstellen und initialisiert das Erstellen. das erstellte Model wird in
+ * currentNeuralNet gespeichert. Standardmäßig ist die Ein- und Augabe auf ein Unit beschränkt. Bias
+ * wird immer genutzt. Zudem wird eine Beschreibungsklassen vom Typ ModelDescription erstellt und
+ * in currentNeuralNetDescriptor gespeichert.
  */
 function createAndBuildFFNN() {
     currentNeuralNet = null;
@@ -82,24 +39,27 @@ function createAndBuildFFNN() {
 }
 
 /**
- * Handelt Click auf FFNN trainieren
+ * Handelt Click auf FFNN trainieren - In einem ersten Schritt wird das Modell nochmals erzeugt und
+ * kompiliert. Anschließend wird es anhand der eingestellten Daten trainiert. Nach dem Training wird
+ * das Modell getestet. Beide Vorgänge werden mit einer visuellen Ausgabe dokumentiert.
  */
 async function trainAndTestFFNN() {
     if (isArrayAndFilled(currentDataSet)) {
         createAndBuildFFNN();
 
         // Daten auf Basis des aktuellen DataSets zusammen stellen
-        const currentData = getData();
+        currentTrainData = getNormalizedData(currentDataSet);
 
         // Trainieren des Models
         await trainModel(currentNeuralNet,
-            currentData.normalizedFeatures,
-            currentData.normalizedLabels,
+            currentTrainData.normalizedFeatures,
+            currentTrainData.normalizedLabels,
             countBatch,
             countEpoch,
             "dokuTrain"
         ).then(() => {
-                alert("Das Training wurde beendet!");
+                alert("Das Training wurde beendet, fahre mit dem Testen fort!");
+                testModel(currentNeuralNet, 'dokuTest');
             }
         );
     } else {
@@ -111,13 +71,32 @@ async function trainAndTestFFNN() {
  * Handelt Click auf FFNN herunterladen
  */
 function downloadFFNN() {
-    alert("Startet den Download des aktuellen FFNN");
+    alert("Nicht implementiert...");
 }
 
 /**
  * Handelt Click auf FFNN hochladen
  */
 function uploadFFNN() {
-    alert("Starte das Upload eines FFNN");
+    alert("Nicht implementiert...");
 }
 
+/**
+ * Stellt die Anwendung auf eines von drei vordefinierten Modellen ein
+ * @param model Die Kennzahl des auszuwählenden Modells
+ * (1: Underfitted,2: Bestfitted, 3: Overfitted)
+ */
+function setPredefinedModel(model) {
+    if (model === 1) {
+        // underfitted
+        alert("Setze unterangepasstes Modell...");
+
+    } else if (model === 2) {
+        // bestfitted
+        alert("Setze gut angepasstes Modell...");
+    }
+    if (model === 3) {
+        // overfitted
+        alert("Setze überangepasstes Modell...");
+    }
+}

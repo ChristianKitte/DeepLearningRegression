@@ -37,8 +37,8 @@ function getShuffledFeatureAndLabelColumn(arr) {
     })
 
     return {
-        features: newFeatureArray,
-        labels: newLabelArray
+        feature: newFeatureArray,
+        label: newLabelArray
     };
 }
 
@@ -84,23 +84,4 @@ function unNormalizeTensor(inputTensor, min, max) {
  */
 function printModel(divContainerId, model) {
     tfvis.show.modelSummary(document.getElementById(divContainerId), model);
-}
-
-/**
- * Liest die Optionsgruppe mit dem übergebenen ID aus und gibt den selektierten Index
- * zurück
- * @param id Die ID einer Optionsgruppe
- * @returns {number} Den Index des ausgewählten Indexes oder -1;
- */
-function getRadioOption(id) {
-    const radios = document.getElementsByName(id);
-    let index = -1;
-
-    for (let radio of radios) {
-        if (radio.checked) {
-            index = +radio.value;
-        }
-    }
-
-    return index;
 }

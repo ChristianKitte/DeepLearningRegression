@@ -10,6 +10,7 @@ const PREDEFINED_DATASET_INDEX = "4";
  */
 let currentNeuralNet;
 let currentNeuralNetDescriptor;
+let currentTrainData;
 
 // Definition der Beispielnetze
 
@@ -86,12 +87,6 @@ const BEST_FITTED = {
 // Defnition der Variablen
 
 /**
- * Die aktuelle Auswahl eines vordefinierten Netzes
- * @type {number}
- */
-let predefinedNet = 2;
-
-/**
  * Die Anzahl der zu verwendenden Hidden Layer
  * @type {number}
  */
@@ -141,26 +136,6 @@ let countBatch = 1;
  * @type {number}
  */
 let countEpoch = 1;
-
-// Auslesen der Optiongruppen
-
-/**
- * Wird aufgerufen, sobald sich die Auswahl eines vordefinierten Netzes ändert. Der
- * Aufruf erfolgt direkt aus dem HTML mit Übergabe einer Nummer.
- * (0 underfit, 1 overfit, 2 best fit)
- * @param value Die getroffene Auswahl
- */
-function onPredefinedChanged(value) {
-    predefinedNet = value;
-
-    if (value === 0) {
-        createUnderfittedFfnn();
-    } else if (value === 1) {
-        createOverfittedFfnn();
-    } else if (value === 2) {
-        createBestfittedFfnn();
-    }
-}
 
 // Auslesen der Slider
 
@@ -236,9 +211,6 @@ d3.select('#optimizer-type')
  * Setzt die initialen Werte nach Abschluss des Ladevorgangs
  */
 function setInitialValue() {
-    // Auslesen der Optiongruppen
-    predefinedNet = getRadioOption("option-predefined");
-
     // Auslesen der Slider
     countHiddenLayer = parseInt(document.getElementById('count-layer').getAttribute('value'));
     let txt1 = "Aktueller Wert: " + countHiddenLayer.toString() + " Layer";

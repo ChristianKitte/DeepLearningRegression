@@ -46,6 +46,18 @@
     width: 200px;
 }
 
+#predefined-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.predefine-button {
+    width: 150px;
+}
+
 .dataset-main-row {
     padding: 10px;
     margin: 5px;
