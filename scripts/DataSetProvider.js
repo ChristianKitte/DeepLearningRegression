@@ -55,7 +55,7 @@ dataSetDropDow.onchange = function (event) {
  * @returns {*}
  */
 function getNormalizedData(dataArray) {
-    return tf.tidy(() => {
+    const workDataSet = tf.tidy(() => {
         // Durchmischen, trennen des DataSets
         const shuffledArray = getShuffledFeatureAndLabelColumn(dataArray);
         const featureTensor = tf.tensor2d(shuffledArray.feature, [shuffledArray.feature.length, 1]);
@@ -72,7 +72,7 @@ function getNormalizedData(dataArray) {
         const minLabel = normalisierungLabels.min;
         const maxLabel = normalisierungLabels.max;
 
-        return workDataSet = {
+        return {
             shuffledArray: shuffledArray,
             featureTensor: featureTensor,
             labelTensor: labelTensor,
@@ -86,6 +86,8 @@ function getNormalizedData(dataArray) {
             maxLabel: maxLabel,
         };
     });
+
+    return workDataSet;
 }
 
 // Helper functions used for sampling

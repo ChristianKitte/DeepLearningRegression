@@ -15,6 +15,7 @@ async function trainModel(compiledModel, inputs, labels, batchSize, epochs, divI
             batchSize: batchSize,
             epochs: epochs,
             shuffle: true,
+            validationSplit: 0.1,
             callbacks: tfvis.show.fitCallbacks(
                 document.getElementById(divIdVisuelleAusgabe),
                 ['loss', 'mse'],
@@ -42,13 +43,14 @@ function testModel(trainedModel, divIdVisuelleAusgabe) {
 
     const [testFeatures, testPredicts] = tf.tidy(() => {
         const testFeatures = tf.linspace(-1, 1, 100);
-        const testPredicts = trainedModel.predict(testFeatures);
-
+        let x = normalizeTensor(testFeatures.reshape([100, 1]), currentTrainData.maxFeature, currentTrainData.minFeature,)
+        const testPredicts = trainedModel.predict(x.normierterTensor);
+        let y = deNormalizeTensor(testPredicts, currentTrainData.minLabel, currentTrainData.maxLabel)
         //const unNormXs = testFeatures.mul(maxFeature.sub(minFeature)).add(minFeature);
         //const unNormPreds = testPredicts.mul(maxLabel.sub(minLabel)).add(minLabel);
 
         // Un-normalize the data
-        return [testFeatures.dataSync(), testPredicts.dataSync()];
+        return [testFeatures.dataSync(), y.dataSync()];
     });
 
     // PunkteArray für die nicht normalisierten Originalpunkte erstellen (GroundTruth)
@@ -63,7 +65,6 @@ function testModel(trainedModel, divIdVisuelleAusgabe) {
     // PunkteArray für die vorhergesagten Punkte erstellen (GroundTruth)
     let predictedPoints = [];
     for (let i = 0; i < 100; i++) {
-        testPredicts[i].toString();
         predictedPoints.push(
             {x: testFeatures[i], y: testPredicts[i]}
         );

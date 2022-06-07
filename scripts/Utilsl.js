@@ -49,10 +49,10 @@ function getShuffledFeatureAndLabelColumn(arr) {
  * @param inputTensor
  * @returns {{normierterTensor: *, min: *, max: *}}
  */
-function normalizeTensor(inputTensor) {
+function normalizeTensor(inputTensor, prevMax = 0, prevMin = 0) {
     return tf.tidy(() => {
-        const max = inputTensor.max();
-        const min = inputTensor.min();
+        const max = prevMax || inputTensor.max();
+        const min = prevMin || inputTensor.min();
         const normalizedTensor = inputTensor.sub(min).div(max.sub(min));
 
         return {
@@ -70,7 +70,7 @@ function normalizeTensor(inputTensor) {
  * @param max Der bei der Normalisierung genutzte Maxwert
  * @returns {*} Ein neuer Tensor mit den ursprünglichen Werten
  */
-function unNormalizeTensor(inputTensor, min, max) {
+function deNormalizeTensor(inputTensor, min, max) {
     return tf.tidy(() => {
         return inputTensor.mul(max.sub(min)).add(min);
     });

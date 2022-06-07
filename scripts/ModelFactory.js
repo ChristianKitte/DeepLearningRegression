@@ -39,7 +39,8 @@ function createSimpleRawModel(
     addDenseLayer("Ausgabelayer", model, inputUnits, useBias, activation)
 
     model.compile({
-        optimizer: optimizerInstance,
+        //optimizer: optimizerInstance,
+        optimizer: tf.train.sgd(0.001),
         loss: lossFunction,
         metrics: ['mse']
         //metrics: metricsArray
