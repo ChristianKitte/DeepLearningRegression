@@ -74,16 +74,26 @@ async function trainAndTestModel() {
 /**
  * Handelt Click auf FFNN herunterladen
  */
-function downloadFFNN() {
-    alert("Nicht implementiert...");
+async function downloadFFNN() {
+    await currentNeuralNet.save('downloads://my-model');
 }
 
 /**
  * Handelt Click auf FFNN hochladen
  */
-function uploadFFNN() {
+async function uploadFFNN() {
     alert("Nicht implementiert...");
+    //currentNeuralNet = await tf.loadLayersModel('http://model-server.domain/download/model.json');
 }
+
+/*
+function loadModel() {
+    const MODEL_PATH = '/models/model.json';
+    const model = tf.loadLayersModel(MODEL_PATH);
+    console.log("model is loaded");
+    return model;
+}
+*/
 
 /**
  * Stellt die Anwendung auf eines von drei vordefinierten Modellen ein

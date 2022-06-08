@@ -59,6 +59,7 @@ function addInputDenseLayer(name = "Neuer Eingabelayer", model, inputUnits, unit
             name: name,
             inputShape: [inputUnits],
             units: units,
+            biasRegularizer: 'l1l2',
             useBias: useBias,
             activation: activation
         }));
@@ -147,7 +148,9 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
     const [xs, preds] = tf.tidy(() => {
         const xs = tf.linspace(0, 1, 100);
         const preds = model.predict(xs.reshape([100, 1]));
+
         preds.print();
+
         const unNormXs = xs
             .mul(maxFeature.sub(minFeature))
             .add(minFeature);
@@ -158,6 +161,7 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
 
         // Un-normalize the data
         return [unNormXs.dataSync(), unNormPreds.dataSync()];
+        //return [xs.dataSync(), preds.dataSync()];
     });
 
 

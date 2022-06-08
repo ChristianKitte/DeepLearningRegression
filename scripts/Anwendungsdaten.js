@@ -251,7 +251,7 @@ function setInitialValue() {
 /**
  * Gibt den zu activationSelection passenden String zurück. Wurde keine auswahl getroffen, so
  * wird sigmoid verwendet
- * 1: sigmoid, 2:relu, 3:tanh
+ * 1: sigmoid, 2:relu, 3:tanh, 4:softmax, 5: linear
  */
 function getActivationSelectionString() {
     if (activationSelection === 1) {
@@ -260,6 +260,10 @@ function getActivationSelectionString() {
         return 'relu';
     } else if (activationSelection === 3) {
         return 'tanh';
+    } else if (activationSelection === 4) {
+        return 'softmax';
+    } else if (activationSelection === 5) {
+        return 'linear';
     } else {
         return 'sigmoid';
     }
@@ -290,8 +294,6 @@ function getMetricsByLossSelection() {
 
     if (lossSelection === 1) {
         retVal = tf.metrics.meanSquaredError;
-    } else if (lossSelection === 2) {
-        retVal = tf.metrics.meanAbsoluteError;
     } else {
         retVal = tf.metrics.meanSquaredError;
     }
@@ -302,21 +304,26 @@ function getMetricsByLossSelection() {
 /**
  * Gibt den zu optimizerSelection passenden String zurück. Wurde keine Auswahl getroffen,
  * so wird adam verwendet
- * 1: sgd, 2: momentum, 3: adam
+ * 1: sgd, 2: momentum, 3: adam, 4: adamax, 5:rmsprop
+ * https://peltarion.com/knowledge-center/documentation/modeling-view/run-a-model/optimizers/adamax
+ * https://www.geeksforgeeks.org/tensorflow-js-tf-train-momentum-function/
  */
 function getOptimizerInstance() {
     if (optimizerSelection === 1) {
-        return tf.train.sgd(0.001);
+        return tf.train.sgd(0.01);
     } else if (optimizerSelection === 2) {
-        // https://www.geeksforgeeks.org/tensorflow-js-tf-train-momentum-function/
-        const learningRate = 0.001;
-        const momentum = 0.09;
+        const learningRate = 0.01;
+        const momentum = 0.1;
         const useNestrov = true;
 
-        return tf.train.momentum(learningRate, momentum, useNestrov);
-    } else {
-        //return tf.train.adam();
-        //return tf.train.adamax();
+        return tf.train, momentum(learningRate, momentum, useNestrov)
+    } else if (optimizerSelection === 2) {
         return tf.train.rmsprop(0.01);
+    } else if (optimizerSelection === 3) {
+        return tf.train.adam();
+    } else if (optimizerSelection === 4) {
+        return tf.train.adamax(0.01);
+    } else if (optimizerSelection === 5) {
+        return tf.train.rmsprop(0.001);
     }
 }

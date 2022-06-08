@@ -81,8 +81,8 @@ function getUniformRandomDataArray(countNumbers, min, max) {
 
     for (let i = 0; i < countNumbers; i++) {
         let feature = getUniformDistributedRandomNumber(min, max);
-        //let label = (feature + 0.8) * (feature - 0.2) * (feature - 0.3) * (feature - 0.6);
-        let label = feature;
+        let label = (feature + 0.8) * (feature - 0.2) * (feature - 0.3) * (feature - 0.6);
+        //let label = feature + 2 * feature;
 
         dataArray.push({
             feature: feature,
