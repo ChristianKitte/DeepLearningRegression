@@ -96,10 +96,10 @@
                 <div class="row dataset-main-row">
                     <div class="col" id="datasetDropDown">
                         <div class="simulation-config">
-                            <label class="form-label" for="dataset">
+                            <label class="form-label" for="data-array">
                                 Wählen Sie ein Sample aus:
                             </label>
-                            <select class="form-select dropdown" id="dataset" aria-label="Default select example">
+                            <select class="form-select dropdown" id="data-array" aria-label="Default select example">
                                 <option selected>Bitte wählen sie einen Datensatz aus:</option>
                                 <option value="1">5 Datensätze</option>
                                 <option value="2">10 Datensätze</option>
@@ -214,14 +214,14 @@
                             <select class="form-select" id="optimizer-type" aria-label="Default select example">
                                 <option selected>Bitte wählen sie den Typ aus:</option>
                                 <option value="1">sgd</option>
-                                <option disabled="disabled" value="2">momentum</option>
+                                <option value="2">momentum</option>
                                 <option value="3">adam</option>
                             </select>
                         </div>
 
                         <div id="netcreation-Button-bar" class="simulation-config">
                             <button id="create-and-build-ffnn" class="btn btn-outline-primary"
-                                    onclick="createAndBuildFFNN();">
+                                    onclick="createFFNNModel();">
                                 FFNN erstellen
                             </button>
                         </div>
@@ -246,7 +246,7 @@
 
                         <div id="nettrain-Button-bar" class="simulation-config">
                             <button id="train-and-test-ffnn" class="btn btn-outline-primary"
-                                    onclick="trainAndTestFFNN();" disabled>
+                                    onclick="trainAndTestModel();">
                                 FFNN trainieren
                             </button>
                         </div>
@@ -394,15 +394,15 @@
         crossorigin="anonymous"></script>
 
 <!-- App Scrips -->
-<script src="./scripts/Konfiguration.js"></script>
-<script src="scripts/Utilsl.js"></script>
+<script src="./scripts/FFNN.js"></script>
+<script src="./scripts/TensorUtils.js"></script>
+<script src="./scripts/Zufallszahlen.js"></script>
+
+<script src="scripts/Anwendungsdaten.js"></script>
+<script src="./scripts/UIHandler.js"></script>
 <script src="./scripts/DataSetProvider.js"></script>
 
 <script src="./scripts/DrawGraph.js"></script>
-<script src="./scripts/UIHandler.js"></script>
-<script src="scripts/ModelFactory.js"></script>
-<script src="scripts/TrainProvider.js"></script>
-<script src="scripts/ModelDescription.js"></script>
 <script src="./scripts/main.js"></script>
 
 </body>

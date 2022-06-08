@@ -1,4 +1,18 @@
-// Handle Button Clicks
+//////////////////////////////////////////////////////////////////////////////////////////
+////
+//// Handelt alle Button Click Ereignisse
+////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Gibt True zurück, wenn es sich bei dem übergebenen Parameter um ein Array mit einer
+ * Länge von größer 0 handelt, es also einen Inhalt hat / nicht leer ist
+ * @param arr Das zu prüfende Array
+ * @returns {boolean} True, wenn es ein nicht leeres Array ist
+ */
+function isArrayAndFilled(arr) {
+    return (Array.isArray(arr) && arr.length > 0);
+}
 
 /**
  * Handelt Click auf FFNN - erstellen und initialisiert das Erstellen. das erstellte Model wird in
@@ -6,36 +20,20 @@
  * wird immer genutzt. Zudem wird eine Beschreibungsklassen vom Typ ModelDescription erstellt und
  * in currentNeuralNetDescriptor gespeichert.
  */
-function createAndBuildFFNN() {
-    currentNeuralNet = null;
-
-    const ffnn = createSimpleRawModel(
+function createFFNNModel() {
+    const model = createModel(
         inputUnits = 1,
+        outputUnits = 1,
         hiddenLayers = countHiddenLayer,
         hiddenUnits = countUnits,
         useBias = true,
-        activation = getActivationSelectionString(),
-        getOptimizerInstance(),
-        getLossSelectionString(),
-        getMetricsByLossSelection());
+        activation = getActivationSelectionString());
 
-    printModel("dokuNetz", ffnn);
-    currentNeuralNet = ffnn;
+    currentNeuralNet = model;
+    document.getElementById(DOKU_TRAIN).innerHTML = "";
+    document.getElementById(DOKU_TEST).innerHTML = "";
 
-    const ffnnDescriptor = new ModelDescription(
-        inputUnits = 1,
-        hiddenLayers = countHiddenLayer,
-        hiddenUnits = countUnits,
-        useBias = true,
-        activation = getActivationSelectionString(),
-        getOptimizerInstance(),
-        getLossSelectionString(),
-        getMetricsByLossSelection());
-
-    currentNeuralNetDescriptor = ffnnDescriptor;
-
-    document.getElementById("dokuTrain").innerHTML = "";
-    document.getElementById("train-and-test-ffnn").disabled = false;
+    tfvis.show.modelSummary(document.getElementById(DOKU_MODEL), model);
 }
 
 /**
@@ -43,25 +41,31 @@ function createAndBuildFFNN() {
  * kompiliert. Anschließend wird es anhand der eingestellten Daten trainiert. Nach dem Training wird
  * das Modell getestet. Beide Vorgänge werden mit einer visuellen Ausgabe dokumentiert.
  */
-async function trainAndTestFFNN() {
-    if (isArrayAndFilled(currentDataSet)) {
-        createAndBuildFFNN();
+async function trainAndTestModel() {
+    if (isArrayAndFilled(currentRandomDataArray)) {
+        // Das Model frisch erzeugen
+        createFFNNModel();
 
         // Daten auf Basis des aktuellen DataSets zusammen stellen
-        currentTrainData = getNormalizedData(currentDataSet);
+        currentTrainData = getNormalizedData(currentRandomDataArray);
 
         // Trainieren des Models
-        await trainModel(currentNeuralNet,
+        await trainModel(
+            currentNeuralNet,
+            getOptimizerInstance(),
+            getLossSelectionString(),
+            getMetricsByLossSelection(),
             currentTrainData.normalizedFeatures,
             currentTrainData.normalizedLabels,
             countBatch,
             countEpoch,
-            "dokuTrain"
-        ).then(() => {
-                alert("Das Training wurde beendet, fahre mit dem Testen fort!");
-                testModel(currentNeuralNet, 'dokuTest');
-            }
-        );
+            DOKU_TRAIN);
+
+        // Testen des Models
+        testModel(
+            currentNeuralNet,
+            currentTrainData,
+            DOKU_TEST);
     } else {
         alert("Bitte wählen Sie ein DataSet aus!");
     }

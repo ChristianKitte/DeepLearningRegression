@@ -1,16 +1,36 @@
-//const LOCAL_HOST = "https://deep-learning.ckitte.de/ea3/";
-const LOCAL_HOST = "./";
-const LOCAL_DATA = LOCAL_HOST + "data/";
-const PREDEFINED_DATASET_INDEX = "4";
-
-// Halten der aktuell gültigen Netze
+//////////////////////////////////////////////////////////////////////////////////////////
+////
+//// Hält alle Anwendungseinstellungen und -daten. Handelt alle Ereignisse, die Daten
+//// der Anwendung abändern ohne Button Click
+////
+//////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Das aktuelle neuronale Netz
  */
 let currentNeuralNet;
-let currentNeuralNetDescriptor;
+/**
+ * Die aktuellen zum training verwendeten, normierten Daten
+ */
 let currentTrainData;
+
+// Ausgabecontainer
+
+/**
+ * Der Ausgabecontainer für die Dokumentation des Modells
+ * @type {string}
+ */
+const DOKU_MODEL = "dokuNetz"
+/**
+ * Der Ausgabecontainer für die Dokumentation des Trainings
+ * @type {string}
+ */
+const DOKU_TRAIN = "dokuTrain"
+/**
+ * Der Ausgabecontainer für die Dokumentation des Tests
+ * @type {string}
+ */
+const DOKU_TEST = "dokuTest"
 
 // Definition der Beispielnetze
 
@@ -118,12 +138,6 @@ let lossSelection = 0;
  * @type {number}
  */
 let optimizerSelection = 0;
-
-/**
- * Die zu verwendende Lernrate beim Training
- * @type {number}
- */
-let countLearningRate = 1;
 
 /**
  * Gibt die Größe eines Batches beim Training an
@@ -292,10 +306,17 @@ function getMetricsByLossSelection() {
  */
 function getOptimizerInstance() {
     if (optimizerSelection === 1) {
-        return tf.train.sgd();
+        return tf.train.sgd(0.001);
     } else if (optimizerSelection === 2) {
-        //return tf.optimizer.momentum(1,1,true);
+        // https://www.geeksforgeeks.org/tensorflow-js-tf-train-momentum-function/
+        const learningRate = 0.001;
+        const momentum = 0.09;
+        const useNestrov = true;
+
+        return tf.train.momentum(learningRate, momentum, useNestrov);
     } else {
-        return tf.train.adam();
+        //return tf.train.adam();
+        //return tf.train.adamax();
+        return tf.train.rmsprop(0.01);
     }
 }
