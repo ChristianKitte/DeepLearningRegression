@@ -40,19 +40,16 @@ const DOKU_TEST = "dokuTest"
  */
 const OVER_FITTED = {
     Model: {
-        inputUnits: 0,
-        hiddenLayers: 0,
-        hiddenUnits: 0,
-        useBias: true,
-        activation: '',
-        optimizerInstance: '',
-        lostFunktion: '',
-        metricsArray: ''
+        units: 6,
+        layers: 7,
+        activation: 2,
+        optimizer: 2,
+        lost: 1
     },
     training: {
-        dataset: 0,
-        batchSize: 0,
-        epochs: 0
+        dataset: 2,
+        batchSize: 8,
+        epochs: 9
     }
 };
 
@@ -62,21 +59,16 @@ const OVER_FITTED = {
  *  */
 const UNDER_FITTED = {
     Model: {
-        inputUnits: 0,
-        hiddenLayers: 0,
-        hiddenUnits: 0,
-        useBias: true,
-        activation: '',
-        optimizerInstance: '',
-        lostFunktion: '',
-        metricsArray: ''
+        units: 6,
+        layers: 7,
+        activation: 2,
+        optimizer: 2,
+        lost: 1
     },
     training: {
-        training: {
-            dataset: 0,
-            batchSize: 0,
-            epochs: 0
-        }
+        dataset: 2,
+        batchSize: 8,
+        epochs: 9
     }
 };
 
@@ -86,21 +78,16 @@ const UNDER_FITTED = {
  *  */
 const BEST_FITTED = {
     Model: {
-        inputUnits: 0,
-        hiddenLayers: 0,
-        hiddenUnits: 0,
-        useBias: true,
-        activation: '',
-        optimizerInstance: '',
-        lostFunktion: '',
-        metricsArray: ''
+        units: 2,
+        layers: 2,
+        activation: 2,
+        optimizer: 2,
+        lost: 1
     },
     training: {
-        training: {
-            dataset: 0,
-            batchSize: 0,
-            epochs: 0
-        }
+        dataset: 2,
+        batchSize: 2,
+        epochs: 2
     }
 };
 
@@ -222,33 +209,6 @@ d3.select('#optimizer-type')
 // Methoden
 
 /**
- * Setzt die initialen Werte nach Abschluss des Ladevorgangs
- */
-function setInitialValue() {
-    // Auslesen der Slider
-    countHiddenLayer = parseInt(document.getElementById('count-layer').getAttribute('value'));
-    let txt1 = "Aktueller Wert: " + countHiddenLayer.toString() + " Layer";
-    d3.select('#count-layer-string').text(txt1);
-
-    countUnits = parseInt(document.getElementById('count-neuron').getAttribute('value'));
-    let txt2 = "Aktueller Wert: " + countUnits.toString() + " Units";
-    d3.select('#count-neuron-string').text(txt2);
-
-    countBatch = parseInt(document.getElementById('count-batch').getAttribute('value'));
-    let txt4 = "Aktueller Wert: " + countBatch.toString();
-    d3.select('#count-batch-string').text(txt4);
-
-    countEpoch = parseInt(document.getElementById('count-epoch').getAttribute('value'));
-    let txt5 = "Aktueller Wert: " + countEpoch.toString();
-    d3.select('#count-epoch-string').text(txt5);
-
-    // Auslesen der DropDowns
-    activationSelection = document.getElementById("activation-type").selectedIndex;
-    lossSelection = document.getElementById("loss-type").selectedIndex;
-    optimizerSelection = document.getElementById("optimizer-type").selectedIndex;
-}
-
-/**
  * Gibt den zu activationSelection passenden String zurück. Wurde keine auswahl getroffen, so
  * wird sigmoid verwendet
  * 1: sigmoid, 2:relu, 3:tanh, 4:softmax, 5: linear
@@ -291,7 +251,6 @@ function getLossSelectionString() {
  */
 function getMetricsByLossSelection() {
     let retVal;
-
     if (lossSelection === 1) {
         retVal = tf.metrics.meanSquaredError;
     } else {
@@ -326,4 +285,31 @@ function getOptimizerInstance() {
     } else if (optimizerSelection === 5) {
         return tf.train.rmsprop(0.001);
     }
+}
+
+/**
+ * Setzt die initialen Werte der Oberfläche basierend auf den aktuellen Werten nach Abschluss des Ladevorgangs
+ */
+function setInitialValue() {
+    // Auslesen der Slider
+    countHiddenLayer = parseInt(document.getElementById('count-layer').getAttribute('value'));
+    let txt1 = "Aktueller Wert: " + countHiddenLayer.toString() + " Layer";
+    d3.select('#count-layer-string').text(txt1);
+
+    countUnits = parseInt(document.getElementById('count-neuron').getAttribute('value'));
+    let txt2 = "Aktueller Wert: " + countUnits.toString() + " Units";
+    d3.select('#count-neuron-string').text(txt2);
+
+    countBatch = parseInt(document.getElementById('count-batch').getAttribute('value'));
+    let txt4 = "Aktueller Wert: " + countBatch.toString();
+    d3.select('#count-batch-string').text(txt4);
+
+    countEpoch = parseInt(document.getElementById('count-epoch').getAttribute('value'));
+    let txt5 = "Aktueller Wert: " + countEpoch.toString();
+    d3.select('#count-epoch-string').text(txt5);
+
+    // Auslesen der DropDowns
+    activationSelection = document.getElementById("activation-type").selectedIndex;
+    lossSelection = document.getElementById("loss-type").selectedIndex;
+    optimizerSelection = document.getElementById("optimizer-type").selectedIndex;
 }

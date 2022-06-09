@@ -46,7 +46,7 @@
         <div class="container-fluid">
             <p class="fs-5">
                 Einsendeaufgabe EA3 : Mit einem feed-forward neural Network (FFNN) soll eine Regression
-                der reellwertigen Funktion: y(x) = (x+0.8) * (x-0.2) * (x-0.3) * (x-0.6) im Wertebereich
+                der reellwertigen</br>Funktion: y(x) = (x+0.8) * (x-0.2) * (x-0.3) * (x-0.6) im Wertebereich
                 [-1,+1] durchgeführt werden.<br>
             </p>
             <p class="fs-5">
@@ -260,9 +260,22 @@
                             <button class="btn btn-outline-primary" onclick="downloadFFNN();">
                                 FFNN herunterladen
                             </button>
-                            <button class="btn btn-outline-secondary" onclick="uploadFFNN();">
-                                FFNN hochladen
-                            </button>
+
+                            <div>
+                                <div class="mb-3">
+                                    <label for="model-json" class="form-label">Modell hochladen (.json)</label>
+                                    <input class="form-control" type="file" id="model-json" accept=".json">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="model-bin" class="form-label">Gewichte hochladen (.bin)</label>
+                                    <input class="form-control" type="file" id="model-bin" accept=".bin">
+                                </div>
+
+                                <button class="btn btn-outline-primary" onclick="uploadFFNN();">
+                                    FFNN hochladen
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

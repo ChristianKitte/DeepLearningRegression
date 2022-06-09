@@ -75,25 +75,32 @@ async function trainAndTestModel() {
  * Handelt Click auf FFNN herunterladen
  */
 async function downloadFFNN() {
-    await currentNeuralNet.save('downloads://my-model');
+    let modelName = prompt("Mit welchen Namen soll das Modell gespeichert werden?", "mein-modell");
+
+    if (modelName != null) {
+        const x = 'downloads://' + modelName;
+        await currentNeuralNet.save(x);
+        alert("Das Model wurde herunter geladen...");
+    }
 }
 
 /**
  * Handelt Click auf FFNN hochladen
  */
 async function uploadFFNN() {
-    alert("Nicht implementiert...");
-    //currentNeuralNet = await tf.loadLayersModel('http://model-server.domain/download/model.json');
-}
+    const input_json = document.querySelector('#model-json'); // Modell
+    const input_bin = document.querySelector('#model-bin'); // Weights
 
-/*
-function loadModel() {
-    const MODEL_PATH = '/models/model.json';
-    const model = tf.loadLayersModel(MODEL_PATH);
-    console.log("model is loaded");
-    return model;
+    if (input_json.files.length === 0 || input_bin.files.length === 0) {
+        alert("Die Modellspezifikation oder die Gewichte sind nicht vorhanden...");
+    } else {
+        currentNeuralNet = await tf.loadLayersModel(
+            tf.io.browserFiles([input_json.files[0], input_bin.files[0]])
+        );
+    }
+
+    tfvis.show.modelSummary(document.getElementById(DOKU_MODEL), currentNeuralNet);
 }
-*/
 
 /**
  * Stellt die Anwendung auf eines von drei vordefinierten Modellen ein
@@ -104,13 +111,48 @@ function setPredefinedModel(model) {
     if (model === 1) {
         // underfitted
         alert("Setze unterangepasstes Modell...");
+        setPredifinedValues(UNDER_FITTED);
 
     } else if (model === 2) {
         // bestfitted
         alert("Setze gut angepasstes Modell...");
+        setPredifinedValues(BEST_FITTED);
     }
     if (model === 3) {
         // overfitted
         alert("Setze überangepasstes Modell...");
+        setPredifinedValues(OVER_FITTED);
     }
+
+    setInitialValue();
+}
+
+/**
+ * Setzt die durch das übergebene JSON definierten Werte
+ * @param valueJson Das JSON mit den zu setzenden Werten (UNDER-/BEST-/OVER-FITTED)
+ */
+function setPredifinedValues(valueJson) {
+    document.getElementById("count-layer").value = 0;
+    document.getElementById("count-layer").value = valueJson.Model.layers;
+
+    document.getElementById("count-neuron").value = 0;
+    document.getElementById("count-neuron").value = valueJson.Model.units;
+
+    document.getElementById("activation-type").selectedIndex = 0;
+    document.getElementById("activation-type").selectedIndex = valueJson.Model.activation;
+
+    document.getElementById("optimizer-type").selectedIndex = 0;
+    document.getElementById("optimizer-type").selectedIndex = valueJson.Model.optimizer;
+
+    document.getElementById("loss-type").selectedIndex = 0;
+    document.getElementById("loss-type").selectedIndex = valueJson.Model.lost;
+
+    document.getElementById("data-array").selectedIndex = 0;
+    document.getElementById("data-array").selectedIndex = valueJson.training.dataset;
+
+    document.getElementById("count-batch").value = 0;
+    document.getElementById("count-batch").value = valueJson.training.batchSize;
+
+    document.getElementById("count-epoch").value = 0;
+    document.getElementById("count-epoch").value = valueJson.training.epochs;
 }
