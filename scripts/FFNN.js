@@ -161,7 +161,6 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
 
         // Un-normalize the data
         return [unNormXs.dataSync(), unNormPreds.dataSync()];
-        //return [xs.dataSync(), preds.dataSync()];
     });
 
 
