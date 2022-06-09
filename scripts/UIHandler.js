@@ -125,6 +125,7 @@ function setPredefinedModel(model) {
     }
 
     setInitialValue();
+    createFFNNModel;
 }
 
 /**
