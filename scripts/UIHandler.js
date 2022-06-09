@@ -125,7 +125,7 @@ function setPredefinedModel(model) {
     }
 
     setInitialValue();
-    createFFNNModel;
+    createFFNNModel();
 }
 
 /**
@@ -148,8 +148,8 @@ function setPredifinedValues(valueJson) {
     document.getElementById("loss-type").selectedIndex = 0;
     document.getElementById("loss-type").selectedIndex = valueJson.Model.lost;
 
-    document.getElementById("data-array").selectedIndex = 0;
-    document.getElementById("data-array").selectedIndex = valueJson.training.dataset;
+    dataArrayDropDow.selectedIndex = 0;
+    dataArrayDropDow.selectedIndex = valueJson.training.dataset;
 
     document.getElementById("count-batch").value = 0;
     document.getElementById("count-batch").value = valueJson.training.batchSize;
