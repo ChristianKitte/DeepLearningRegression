@@ -124,7 +124,6 @@ function setPredefinedModel(model) {
         setPredifinedValues(OVER_FITTED);
     }
 
-    setInitialValue();
     createFFNNModel();
 }
 
@@ -133,27 +132,35 @@ function setPredefinedModel(model) {
  * @param valueJson Das JSON mit den zu setzenden Werten (UNDER-/BEST-/OVER-FITTED)
  */
 function setPredifinedValues(valueJson) {
-    document.getElementById("count-layer").value = 0;
-    document.getElementById("count-layer").value = valueJson.Model.layers;
+    document.getElementById('count-layer').setAttribute('value', valueJson.Model.layers);
+    countHiddenLayer = parseInt(document.getElementById('count-layer').getAttribute('value'));
+    let txt1 = "Aktueller Wert: " + countHiddenLayer.toString() + " Layer";
+    d3.select('#count-layer-string').text(txt1);
 
-    document.getElementById("count-neuron").value = 0;
-    document.getElementById("count-neuron").value = valueJson.Model.units;
+    document.getElementById('count-neuron').setAttribute('value', valueJson.Model.units);
+    countUnits = parseInt(document.getElementById('count-neuron').getAttribute('value'));
+    let txt2 = "Aktueller Wert: " + countUnits.toString() + " Units";
+    d3.select('#count-neuron-string').text(txt2);
 
-    document.getElementById("activation-type").selectedIndex = 0;
+    document.getElementById('count-batch').setAttribute('value', valueJson.training.batchSize);
+    countBatch = parseInt(document.getElementById('count-batch').getAttribute('value'));
+    let txt4 = "Aktueller Wert: " + countBatch.toString();
+    d3.select('#count-batch-string').text(txt4);
+
+    document.getElementById('count-epoch').setAttribute('value', valueJson.training.epochs);
+    countEpoch = parseInt(document.getElementById('count-epoch').getAttribute('value'));
+    let txt5 = "Aktueller Wert: " + countEpoch.toString();
+    d3.select('#count-epoch-string').text(txt5);
+
     document.getElementById("activation-type").selectedIndex = valueJson.Model.activation;
+    activationSelection = document.getElementById("activation-type").selectedIndex;
 
-    document.getElementById("optimizer-type").selectedIndex = 0;
     document.getElementById("optimizer-type").selectedIndex = valueJson.Model.optimizer;
+    optimizerSelection = document.getElementById("optimizer-type").selectedIndex;
 
-    document.getElementById("loss-type").selectedIndex = 0;
     document.getElementById("loss-type").selectedIndex = valueJson.Model.lost;
+    lossSelection = document.getElementById("loss-type").selectedIndex;
 
-    dataArrayDropDow.selectedIndex = 0;
-    dataArrayDropDow.selectedIndex = valueJson.training.dataset;
-
-    document.getElementById("count-batch").value = 0;
-    document.getElementById("count-batch").value = valueJson.training.batchSize;
-
-    document.getElementById("count-epoch").value = 0;
-    document.getElementById("count-epoch").value = valueJson.training.epochs;
+    dataArrayDropDow.value = valueJson.training.dataset;
+    dataArrayDropDow.dispatchEvent(new Event('change'));
 }

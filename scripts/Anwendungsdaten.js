@@ -42,8 +42,8 @@ const OVER_FITTED = {
     Model: {
         units: 6,
         layers: 7,
-        activation: 2,
-        optimizer: 2,
+        activation: 3,
+        optimizer: 3,
         lost: 1
     },
     training: {
@@ -66,7 +66,7 @@ const UNDER_FITTED = {
         lost: 1
     },
     training: {
-        dataset: 2,
+        dataset: 3,
         batchSize: 8,
         epochs: 9
     }
@@ -80,12 +80,12 @@ const BEST_FITTED = {
     Model: {
         units: 2,
         layers: 2,
-        activation: 2,
-        optimizer: 2,
+        activation: 4,
+        optimizer: 4,
         lost: 1
     },
     training: {
-        dataset: 2,
+        dataset: 4,
         batchSize: 2,
         epochs: 2
     }

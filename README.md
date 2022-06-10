@@ -46,8 +46,6 @@ Jeweils das gleiche Dataset mit n= 100 DS und Nois mit Varianz von 0,3
 
 ![](assets/2022-06-09-20-39-09-image.png)![](assets/2022-06-09-20-38-33-image.png)
 
-
-
 13 Layer, 32 Units, ReLu, MSE, adamax (0,01), n=50/Batch, 400 Epochen
 
 ![](assets/2022-06-09-21-54-09-image.png)

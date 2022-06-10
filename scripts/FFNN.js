@@ -163,7 +163,6 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
         return [unNormXs.dataSync(), unNormPreds.dataSync()];
     });
 
-
     const predictedPoints = Array.from(xs).map((val, i) => {
         return {x: val, y: preds[i]}
     });
@@ -178,9 +177,22 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
         );
     });
 
+    // 100 neu erzeugte, zufällige Daten ohne Rauschen
+    groundTruthPoints = [];
+    let dataArray = getFullDataArray(-1, 1, 0.01);
+    dataArray.forEach((element, i) => {
+        originalPoints.push(
+            {x: element.feature, y: element.label}
+        );
+    });
+
+
     tfvis.render.scatterplot(
         document.getElementById(divIdVisuelleAusgabe),
-        {values: [originalPoints, predictedPoints], series: ['Original', 'Vorhersage']},
+        {
+            values: [originalPoints, predictedPoints, groundTruthPoints],
+            series: ['Original', 'Vorhersage', 'GroundTruth']
+        },
         {
             xLabel: 'X Wert',
             yLabel: 'Y Wert',
