@@ -10,7 +10,6 @@
  * @type {*[]}
  */
 let currentRandomDataArray = [];
-
 /**
  * Das DropDown Element zur Auswahl des DataSets
  * @type {HTMLElement}

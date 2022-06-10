@@ -30,6 +30,7 @@ function createFFNNModel() {
         activation = getActivationSelectionString());
 
     currentNeuralNet = model;
+
     document.getElementById(DOKU_TRAIN).innerHTML = "";
     document.getElementById(DOKU_TEST).innerHTML = "";
 
@@ -43,11 +44,13 @@ function createFFNNModel() {
  */
 async function trainAndTestModel() {
     if (isArrayAndFilled(currentRandomDataArray)) {
+        // Dispose all variables kept in backend engine.
+        tf.disposeVariables();
         // Das Model frisch erzeugen
         createFFNNModel();
 
         // Daten auf Basis des aktuellen DataSets zusammen stellen
-        currentTrainData = getNormalizedData(currentRandomDataArray);
+        let currentTrainData = getNormalizedData(currentRandomDataArray);
 
         // Trainieren des Models
         await trainModel(
@@ -72,6 +75,31 @@ async function trainAndTestModel() {
 }
 
 /**
+ * Nutzt das aktuelle Modell um mit den aktuellen Daten eine Vorhersage zu machen.
+ * Hierbei wird das Modell weder neu erzeugt noch vorher trainiert.
+ */
+function onlyUseModel() {
+    if (isArrayAndFilled(currentRandomDataArray)) {
+        if (currentNeuralNet !== null) {
+            // Daten auf Basis des aktuellen DataSets zusammen stellen
+            let currentTrainData = getNormalizedData(currentRandomDataArray);
+
+            document.getElementById(DOKU_TRAIN).innerHTML = "";
+            document.getElementById(DOKU_TEST).innerHTML = "";
+
+            useModel(
+                currentNeuralNet,
+                currentTrainData,
+                DOKU_TEST);
+        } else {
+            alert("Kein Modell vorhanden!");
+        }
+    } else {
+        alert("Bitte wählen Sie ein DataSet aus!");
+    }
+}
+
+/**
  * Handelt Click auf FFNN herunterladen
  */
 async function downloadFFNN() {
@@ -87,7 +115,7 @@ async function downloadFFNN() {
 /**
  * Handelt Click auf FFNN hochladen
  */
-async function uploadFFNN() {
+async function createFFNN() {
     const input_json = document.querySelector('#model-json'); // Modell
     const input_bin = document.querySelector('#model-bin'); // Weights
 

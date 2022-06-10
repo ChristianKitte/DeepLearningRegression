@@ -92,27 +92,3 @@ function getUniformRandomDataArray(countNumbers, min, max) {
 
     return dataArray;
 }
-
-/**
- * Erzeugt ein Array fortlaufender Nummern als feature im angegebenen Bereich und der vorgegebenen Schrittweite.
- * Das label ergibt sich aus der Funktion: (feature + 0.8) * (feature - 0.2) * (feature - 0.3) * (feature - 0.6)
- * @param min Der Startwert
- * @param max Der Endwert
- * @param step Die Schrittweite
- * @returns {*[]} Ein Array mit den Zahlen in aufsteigender Reihenfolge
- */
-function getFullDataArray(min, max, step) {
-    let dataArray = [];
-
-    for (let i = min; i < max; i = i + step) {
-        let feature = i;
-        let label = (feature + 0.8) * (feature - 0.2) * (feature - 0.3) * (feature - 0.6);
-
-        dataArray.push({
-            feature: feature,
-            label: label,
-        });
-    }
-
-    return dataArray;
-}

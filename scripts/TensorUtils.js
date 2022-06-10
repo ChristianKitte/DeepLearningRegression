@@ -35,7 +35,9 @@ function getShuffledFeatureAndLabelArray(arr) {
 function normalizeTensor(inputTensor, prevMax = 0, prevMin = 0) {
     return tf.tidy(() => {
         const max = prevMax || inputTensor.max();
+        max.print();
         const min = prevMin || inputTensor.min();
+        min.print()
         const normalizedTensor = inputTensor.sub(min).div(max.sub(min));
 
         return {

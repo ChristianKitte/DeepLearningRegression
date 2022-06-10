@@ -148,8 +148,7 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
     const [xs, preds] = tf.tidy(() => {
         const xs = tf.linspace(0, 1, 100);
         const preds = model.predict(xs.reshape([100, 1]));
-
-        preds.print();
+        //preds.print();
 
         const unNormXs = xs
             .mul(maxFeature.sub(minFeature))
@@ -169,7 +168,7 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
 
     let origX = shuffledArray.featureArray;
     let origY = shuffledArray.labelArray;
-    originalPoints = [];
+    let originalPoints = [];
 
     origX.forEach((element, i) => {
         originalPoints.push(
@@ -177,21 +176,11 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
         );
     });
 
-    // 100 neu erzeugte, zufällige Daten ohne Rauschen
-    groundTruthPoints = [];
-    let dataArray = getFullDataArray(-1, 1, 0.01);
-    dataArray.forEach((element, i) => {
-        originalPoints.push(
-            {x: element.feature, y: element.label}
-        );
-    });
-
-
     tfvis.render.scatterplot(
         document.getElementById(divIdVisuelleAusgabe),
         {
-            values: [originalPoints, predictedPoints, groundTruthPoints],
-            series: ['Original', 'Vorhersage', 'GroundTruth']
+            values: [originalPoints, predictedPoints],
+            series: ['Original', 'Vorhersage']
         },
         {
             xLabel: 'X Wert',
@@ -199,4 +188,66 @@ function testModel(model, normalizationData, divIdVisuelleAusgabe) {
             height: 300
         }
     );
+}
+
+/**
+ * Nutzt das übergebene Modell um Vorhersagen auf Basis der übergebenen Daten zu machen. Das Ergebnis
+ * wird in einem Scatterplot ausgegeben. Hierdurch ist ein Vergleich zwischen Ground Truth und
+ * Vorhersage möglich.
+ * @param model
+ * @param normalizationData
+ * @param divIdVisuelleAusgabe
+ */
+function useModel(model, normalizationData, divIdVisuelleAusgabe) {
+    const {
+        shuffledArray,
+        normalizedFeatures,
+        normalizedLabels,
+        minFeature,
+        maxFeature,
+        minLabel,
+        maxLabel
+    } = normalizationData;
+
+    // Generate predictions for a uniform range of numbers between 0 and 1;
+    // We un-normalize the data by doing the inverse of the min-max scaling
+    // that we did earlier.
+    const [xs, preds] = tf.tidy(() => {
+        const xs = normalizedFeatures;
+        const preds = model.predict(xs);
+
+        const unNormXs = xs
+            .mul(maxFeature.sub(minFeature))
+            .add(minFeature);
+
+        const unNormPreds = preds
+            .mul(maxLabel.sub(minLabel))
+            .add(minLabel);
+
+        // Un-normalize the data
+        return [unNormXs.dataSync(), unNormPreds.dataSync()];
+    });
+
+    const predictedPoints = Array.from(xs).map((val, i) => {
+        return {x: val, y: preds[i]}
+    });
+
+    const groundTruthPoints = Array.from(xs).map((val, i) => {
+        const label = (val + 0.8) * (val - 0.2) * (val - 0.3) * (val - 0.6);
+        return {x: val, y: label}
+    });
+
+    tfvis.render.scatterplot(
+        document.getElementById(divIdVisuelleAusgabe),
+        {
+            values: [predictedPoints, groundTruthPoints],
+            series: ['Vorhersage', 'Ground Truth']
+        },
+        {
+            xLabel: 'X Wert',
+            yLabel: 'Y Wert',
+            height: 300
+        }
+    );
+
 }

@@ -258,10 +258,14 @@
 
                     <div class="net-config" id="down-upload">
                         <div id="download-Button-bar" class="simulation-config option-bar">
-                            <button class="btn btn-outline-primary" onclick="downloadFFNN();">
-                                FFNN herunterladen
-                            </button>
-
+                            <div>
+                                <button class="btn btn-outline-primary" onclick="downloadFFNN();">
+                                    FFNN herunterladen
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="onlyUseModel();">
+                                    FFNN nutzen
+                                </button>
+                            </div>
                             <div>
                                 <div class="mb-3">
                                     <label for="model-json" class="form-label">Modell hochladen (.json)</label>
@@ -273,8 +277,8 @@
                                     <input class="form-control" type="file" id="model-bin" accept=".bin">
                                 </div>
 
-                                <button class="btn btn-outline-primary" onclick="uploadFFNN();">
-                                    FFNN hochladen
+                                <button class="btn btn-outline-primary" onclick="createFFNN();">
+                                    FFNN Erzeugen
                                 </button>
                             </div>
                         </div>
