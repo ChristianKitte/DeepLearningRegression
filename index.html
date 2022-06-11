@@ -385,15 +385,162 @@
 
             <h5>
                 <strong>
-                    Daten
+                    Umsetzung
                 </strong>
             </h5>
 
+            <p>Bei der Umsetzung der Basis, insbesondere der zu nutzenden Daten und Funktion, wurde sich eng an die
+                Vorgaben der Aufgabe gehalten und diese umgesetzt. In einer ersten Iteration wurden hierzu mit Hilfe von
+                Online Generatoren die benötigten DataSets generiert und mit einem Rauschen angereichert. Diese sollten
+                als Basis für die Experimente dienen. Primär aus zwei Gründen wurde dieser Ansatz verworfen: Zum einen
+                würde man hierdurch immer mit den gleichen Daten arbeiten, zum anderen zeigten sich beim Laden und
+                aufbereiten Geschwindigkeitsprobleme. Die letztlich umgesetzte Variante, alle Daten on the fly zu
+                generieren erwies sich in der Folge als richtig. Die Methodik zur Berechnung wurde hierbei einer fremden
+                Quelle entnommen.
+            </p>
+
+            <p>Bezogen auf die Möglichkeiten der Anwendung existiert Spielraum und es wurden in der ersten Iteration nur
+                die zur Umsetzung benötigten Funktionalitäten implementiert. Bei der späteren Arbeit mit der Anwendung
+                konnten weitere nützliche Funktionen identifiziert und implementiert werden. Bei der Erstellung des
+                Netzes wird auf die <strong>Layer-API</strong> von Tensorflow zurück gegriffen. Diese ist ähnlich der
+                von Keras und sehr benutzerfreundlich. Daneben kann die sogenannte <strong>Core-API</strong> verwendet
+                werden. Sie ist komplexer, bietet dafür aber wesentlich mehr Spielraum und Möglichkeiten. Trainings
+                erfolgen in dieser Anwendung immer auf <strong>Tensoren</strong>, nicht auf <strong>DataSets</strong>.
+            </p>
+
             <h5>
                 <strong>
-                    Umsetzung der Aufgabe
+                    Lösung
                 </strong>
             </h5>
+            <p>Die hier vorliegende Lösung teilt sich auf zwei Reitern auf. Auf dem <strong>linken Reiter</strong> kann
+                durch Auswahl die Zahl der zu verwendenden <strong>Daten</strong> ausgewählt werden. Diese werden bei
+                jeder Auswahl <strong>neu und zufällig generiert</strong>. Anschließend wird ihnen ebenfalls mit jeweils
+                neu generierten Zufallszahlen ein Gaußsches Rauschen mit einer Varianz von 0,3 hinzugefügt.
+            </p>
+
+            <p>Unabhängig von der durch Tensorflow durchgeführten und zufälligen Initialisierung der Anfangswerte der
+                Parameter aka Gewichte im Modell führt dies dazu, das alleine schon hierdurch bei jedem Durchlauf mit
+                neuen Datasets die Ergebnisse eine andere Form annehmen können.
+            </p>
+
+            <p>Auf dem <strong>zweiten Reiter</strong> finden sich diverse Möglichkeiten für die <strong>Einstellung,
+                Nutzung und Speicherung des zu erzeugenden FFNN</strong>. Ganz oben auf der linken Seite des Reiters
+                kann ein <strong>vordefiniertes Netz ausgewählt werden</strong>, dass einem über-, unter- oder gut
+                angepassten Netz entspricht.
+            </p>
+
+            <p>Darunter kann ein eigenes Netz definiert werden. Grundsätzlich werden <strong>sequenzielle Netze</strong>
+                mit Dense Layern erstellt. <strong>Dense Layer</strong> haben die Eigenschaft, dass jedes Unit aka
+                Neuron der vorhergehenden Schicht mit allen Units der nachfolgenden verbunden ist. Weiter ist fest
+                vorgegeben, das die <strong>Ein- und Ausgabe</strong> jeweils nur <strong>ein Unit</strong> enthält.
+            </p>
+
+            <p>Weiter wird die Nutzung des <strong>Bias eingeschaltet</strong> sowie <strong>zur Regulierung
+                "L1L2"</strong> verwendet, um das Netz ausgeglichener zu gestalten. Die <strong>L1 Regulierung</strong>
+                versucht, die Summe aller Gewichte zu minimieren. Dies wirkt insbesondere auf kleine Gewichte. Bei einer
+                <strong>L2 Regulierung</strong> wird das Quadrat der Gewichte reguliert, wodurch große Gewichte
+                besonders betroffen sind. Die Gewichte werden hierdurch gleichmäßiger. Die Kombination beider Gewichte
+                wird als "<strong>L1L2</strong>" oder "<strong>Elastic Net Regularization</strong>" bezeichnet.
+            </p>
+
+            <p>Die Bedienung ist sehr linear. Es werden die Anzahl an Schichten und Neuronen je Layer ausgewählt.
+                Anschließend eine Aktivierungs- sowie Verlustfunktion und zum Abschluss ein Optimierer. Die in Klammern
+                angegebene Zahl gibt die intern hierfür vorgesehene <strong>Schrittlänge</strong> an. Über den Button
+                "<strong>FNN erstellen</strong>" erfolgt die Generierung. Das erstellte Netz wird in der Übersicht
+                rechts wie hier zu sehen angezeigt:
+            </p>
+
+            <p><img alt="" src="assets/2022-06-11-13-03-33-image.png"></p>
+
+            <p>Die folgende Codesequenz zeigt einen Ausschnitt aus dem dahinter liegenden Code zum Hinzufügen eines
+                Dense Layers zum einem Modell:
+            </p>
+
+            <p><img alt="" src="assets/2022-06-09-21-59-47-image.png"></p>
+
+            <p>Nachdem ein Netz erstellt wurde kann im nachfolgenden Abschnitt auf der linken Seite das Training und
+                Testen konfiguriert werden. Hierzu kann die <strong>Größe eines Batches</strong> sowie die <strong>Anzahl
+                    der Epochen</strong> eingestellt werden. Variationen sind hier nicht vorgesehen und als zu
+                verwendende <strong>Metrik</strong> ist fest <strong>Mean Square Error ("mse")</strong> eingestellt.
+                Zudem wird ein <strong>Validation Split fix mit 0,3</strong> vorgenommen. Hierdurch wird der angegebene
+                Teil an Trainingsdaten intern von Tensorflow für die Beurteilung des Ergebnisses verwendet. Dieser Teil
+                wird nicht trainiert und stellt somit eine <strong>unabhängige Evaluierung</strong> dar.
+            </p>
+
+            <p>Mit dem Button "<strong>FFNN trainieren</strong>" startet das Training. Hierbei werden die Trainingsdaten
+                zur Verbesserung der Ergebnisse zunächst <strong>normalisiert</strong> (auch wenn dies im Rahmen dieser
+                Aufgabe eher wenig Auswirkungen hat). Zudem wird grundsätzlich im Vorfeld zunächst die Funktion <strong>tf.disposeVariables()</strong>
+                aufgerufen und das Netz nochmals neu erzeugt und kompiliert. Dies ist Sinnvoll, um alte Rudimente final
+                zu entsorgen, da Tensorflow, wohl auch auf Grund der internen Umsetzung, Defizite bei der Bereinigung
+                des Speichers hat und zur Erzeugung von <strong>Memory Leaks</strong> neigt. Die angewandte Funktion
+                verwirft die im <strong>Backend verbliebenen Variablen</strong>. Trotz dessen kann es sinnvoll sein, das
+                Netz explizit erneut erstellen zu lassen. In der nachfolgenden Abbildung ist der Sourcecode für das
+                Kompilieren und Trainieren abgebildet:
+            </p>
+
+            <p><img src="assets/2022-06-09-21-57-11-image.png"></p>
+
+            <p>Während des Training werden die Metriken "<strong>loss</strong>" und "<strong>mse</strong>" ausgegeben.
+                Hierüber kann bereits eine Einschätzung erfolgen, wie gut das Modell über die Epochen hinweg fittet. Ein
+                sehr unruhiger Verlauf zeigt, dass sich bei der Anpassung der Gewichte etwas tut und Korrekturen
+                erfolgen. Gerade Kurven sind ein Indiz für wenig bis keine Aktivität. Gerade hier ist eine Anpassung der
+                Hyperparameter des Netzes notwendig. In der folgenden Abbildung ist ein solcher Trainingsverlauf über
+                etwa 200 Epochen abgebildet:
+            </p>
+
+            <p><img alt="" src="assets/2022-06-09-21-22-12-image.png"></p>
+
+            <p>Das Ergebnis des Trainings wird zudem auf der rechten Seite des Tabs als Scatterplot ausgegeben. Es
+                erfolgen <strong>zwei Ausgaben</strong>. Der mit "<strong>Original</strong>" bezeichnete Graph zeigt die
+                berechneten Punkt des aktuellen DataSets an. Der mit "<strong>Vorhersage</strong>" bezeichnete Graph die
+                durch das Trainierte Model durchgeführte Vorhersage der Punkt. Hierfür werden mit dem trainierten Modell
+                und Tensorflow eigenen Funktionen eine Datenreihe erzeugt und vorhergesagt. Die Ergebnisse werden
+                <strong>denormalisiert</strong> und zur Anzeige gebracht. Die unten stehende Abbildung zeigt den zur
+                oberen Ausgabe gehörenden Scatterplot:
+            </p>
+
+            <p><img alt="" src="assets/2022-06-09-21-21-59-image.png"></p>
+
+            <p>Die Funktion <strong>tf.tidy()</strong> sorgt hierbei für eine saubere Entsorgung nicht weiter benötigter
+                Tensoren nach dem Training und dem Verlassen der Funktion. Der Funktion wird als Parameter die
+                auszuführende Trainingsfunktion selbst übergeben. Der folgende Codeausschnitt zeigt einen Teil der
+                zugehörigen Umsetzung:
+            </p>
+
+            <p><img alt="" src="assets/2022-06-09-21-58-20-image.png"></p>
+
+            <p>Im letzten Abschnitt der Anwendung rechts unten geht es um das <strong>Serialisieren</strong> und
+                <strong>Verwenden von Modellen</strong>. Mit dem Button "<strong>FFNN herunterladen</strong>" können
+                alle in der Anwendung erstellten <strong>Modelle</strong> inklusive deren <strong>Gewichte</strong>
+                herunter geladen werden. Hierbei repräsentiert die <strong>JSON Datei das Modell</strong> und verweist
+                unter anderen auf die Gewichtsdatei. Die zugehörige <strong>BIN Datei enthält die Gewicht respektive
+                    Parameter</strong> des Models. Bei einer manuellen Änderung des Namens muss der Verweis in der JSON
+                Datei unbedingt berücksichtigt werden.
+            </p>
+
+            <p>Soll ein Modell geladen werde, so ist zunächst die JSON und BIN Datei auszuwählen. Hierfür existieren
+                zwei eindeutig beschriftete Eingaben zur Dateiauswahl wie in der folgenden Abbildung zu sehen ist:
+            </p>
+
+            <p><img alt="" src="assets/2022-06-11-13-23-39-image.png"></p>
+
+            <p>Anschließend kann über den Button "<strong>FFNN erzeugen</strong>" das neuronale Netz erzeugt und genutzt
+                werden. Die Definition des Netzes wird rechts ausgegeben. Um ein <strong>geladenes oder trainiertes
+                    neuronales Netz nur zu nutzen</strong>, genügt ein Click auf den Button "<strong>FFNN
+                    nutzen</strong>". Hierdurch wird das <strong>jeweils aktuelle Netz</strong> genutzt, um aus dem
+                aktuellen Dataset Vorhersagen zu generieren. Diese werden links im Tab als Scatterplot ausgegeben. Die
+                folgende Abbildung zeigt eine solche Ausgabe:
+            </p>
+
+            <p><img alt="" src="assets/2022-06-11-13-26-02-image.png"></p>
+
+            <p>Als DataSet kann <strong>jedes neu in der Anwendung generierte DataSet beliebiger Größe</strong>
+                verwendet werden. "<strong>Ground Truth</strong>" gibt hierbei die berechneten Punkte, "<strong>Vorhersage</strong>"
+                die durch das Modell vorhergesagten Werte wieder. Grundsätzlich kann auf diese Weise ein beliebiges Netz
+                geladen werden, auf Grund der konkreten Implementierung eigenen sich jedoch <strong>nur</strong> Netze,
+                welche sich der Aufgabenstellung widmen.
+            </p>
 
             <h5>
                 <strong>
@@ -401,6 +548,135 @@
                 </strong>
             </h5>
 
+            <p>Neben der Anwendung selbst sollte sich näher mit der Erstellung von Netzen und der Auswirkung von
+                Hyperparameter beschäftigt werden. Insbesondere sollte versucht werden, die Effekte von <strong>Under-
+                    und Overfitting</strong> nachzuvollziehen.
+            </p>
+
+            <p>Die folgenden Ausführungen wurden mit <strong>ReLu</strong> als Aktivierungsfunktion,
+                <strong>MSE</strong> als Verlustfunktion sowie <strong>adamax mit einer Schrittlänge von 0,01</strong>
+                als Optimizer ausgeführt. Hierbei wurde wie folgt vorgegangen:
+            </p>
+
+            <p><strong>Erstellen des Netzes</strong> mit den entsprechenden Hyperparametern. Anschließend erfolgt das
+                <strong>Training auf Basis eines neu generierten Datasets mit N=100</strong> gleichverteilten und mit
+                einem Rauschen überlagerten Daten. Nach dem Training wird eine neues <strong>Dataset mit N=50</strong>
+                gleichartigen Daten erstellt und damit das <strong>Modell getestet</strong>.
+            </p>
+
+            <p>Die nach dem Training vorhandenen Ausgaben für den <strong>Verlauf der Metriken "loss" und "mse"</strong>
+                sowie der <strong>Scatterplot</strong> des durchgeführten Tests geben über das <strong>Training
+                    Auskunft</strong>. Insbesondere über die Genauigkeit in Bezug zu den Trainingsdaten. Der
+                nachfolgende <strong>Scatterplot des Tests mit neuen und unbekannten Daten</strong> zeigt die
+                Fähigkeiten in Bezug zur <strong>gewollten Generalisierung</strong>. Dies würde normalerweise mit zuvor
+                separierten Daten geschehen. Da im Rahmen dieser Aufgabe jedoch die Funktion selbst bekannt ist, ist
+                auch die "Ground Truth" bekannt bzw. kann anhand beliebiger Daten <strong>berechnet werden</strong>.
+            </p>
+
+            <h6 class="atx" id="underfitted">Underfitted</h6>
+
+            <p>Die Erzeugung eines Modells, das als Underfitted bezeichnet werden kann, hat sich als relativ leicht
+                herausgestellt. Da die Funktion selbst eine gewisse Komplexität hat, ist abzusehen, das das nur 4
+                Gewichte es nicht schaffen, die Funktion anzunähern, insbesondere bei nur 2 Layern.
+            </p>
+
+            <p><strong>2 Layer, 4 Units, Batchgröße 25, 100 Epochen</strong></p>
+
+            <p><img alt="" src="assets/2022-06-11-13-52-53-image.png"></p>
+
+            <p>Die Gerade zeigt nach Abschluss des Training nur <strong>annähernd und vereinfacht</strong> den Verlauf
+                der Funktion nach. Man kann sich vorstellen, dass gelerntes immer wieder überschrieben wird. Der Graph
+                näher sich zwar schon an, aber zeigt nur grob den Verlauf der Kurve nach.
+            </p>
+
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:</strong></p>
+
+            <p><img alt="" src="assets/2022-06-11-13-54-36-image.png"></p>
+
+            <h6 class="atx" id="bestfitted">Bestfitted</h6>
+
+            <p>Das Beste Ergebnis zeigt das folgende Modell. Hier wurde intuitiv ausprobiert, die <strong>Anzahl der
+                Units denen der Batchgröße anzupassen</strong>. Mit 32 Datensätzen ist es wahrscheinlicher, bei 100
+                Datensätzen immer <strong>unterschiedliche Kombinationen</strong> zu erhalten, als mit einer Batchgröße
+                von über 50 Prozent der Trainingsdaten. Weiter wurden 13 Layer gewählt, da mit diesen bei weiteren
+                Versuchen <strong>eher gute Ergebnisse</strong> erhalten wurden und diese geeignet erscheinen. Mit 300
+                Epochen soll sicher gestellt werden, dass <strong>möglichst viele Kombinationen</strong> gelernt werden.
+            </p>
+
+            <p><strong>13 Layer, 32 Units, Batchgröße 32, 300 Epochen</strong></p>
+
+            <p><img alt="" src="assets/2022-06-11-14-36-01-image.png"></p>
+
+            <p>Das Ergebnis des Trainings zeigt, dass das Modell den Kurvenverlauf der Funktion <strong>äußerst
+                genau</strong> nachzeichnet. Lediglich <strong>im rechten Bereich</strong> zeigen sich Abweichungen
+                sowie ganz links.
+            </p>
+
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:</strong>
+            </p>
+
+            <p><img alt="" src="assets/2022-06-11-14-37-23-image.png"></p>
+
+            <p><strong>Entgegen der ersten Vermutung</strong> zeigt das Modell bei der Vorhersage unbekannter Daten
+                einen <strong>sehr schönen Verlauf</strong>. Alle Kurven werden <strong>gut angenähert</strong> und
+                insbesondere im ganz rechten und linken Bereich scheint die Vorhersage in die richtige Richtung zu gehen
+                (Hier schwächelt das überangepasste Modell weiter unten). Alle Abstände sind im genutzten Wertebereich
+                <strong>kleiner als 0,1</strong> und somit ebenfalls besser als das folgende, überangepasste Modell.
+                Daher ist dies Modell für mich das am besten angepasste.
+            </p>
+
+            <h6 class="atx" id="overfitted">Overfitted</h6>
+
+            <p>Auf Basis der vorherigen Ergebnisse wurde hier wieder die Strategie gewählt, die <strong>Batchgröße der
+                Anzahl an Units anzupassen</strong>, jedoch diesmal <strong>mit mehr Units</strong>. Die Anzahl der
+                Epochen wurde bei 300 belassen.
+            </p>
+
+            <p><strong>13 Layer, 48 Units, Batchgröße 48, 300 Epochen</strong></p>
+
+            <p><img alt="" src="assets/2022-06-11-14-41-31-image.png"></p>
+
+            <p>In dem Scatterplot erkennt man, dass die Vorhersage zu den Trainingsdaten eine <strong>sehr hohe
+                Übereinstimmung</strong> zeigt. Wichtiger ist jedoch der Test mit noch unbekannten Daten.
+            </p>
+
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:</strong></p>
+
+            <p><img alt="" src="assets/2022-06-11-14-42-54-image.png"></p>
+
+            <p>Hier erkennt man, das sich das <strong>Ergebnis sich zu den vorhergehenden Versuchen verschlechtert
+                hat</strong>. Insbesondere der Abstand im Bereich -0,6 und -0,4 ist <strong>relevant größer</strong> und
+                rechts scheint sich der Graph in eine <strong>Grade fortzusetzen</strong>. Dies führt zu der Annahme,
+                das mit den hier verwendeten Parametern das Modell Overfitted ist.
+            </p>
+
+            <h6 class="atx" id="weitere-ergebnisse">Weitere Ergebnisse</h6>
+
+            <p>Im folgenden werden weitere Ergebnisse gezeigt, die im Verlauf der Beschäftigung mit der Aufgabe gewonnen
+                wurden, <strong>ohne weiter hierauf einzugehen</strong>. Hierbei gelten die gleichen, wie oben
+                angegebenen Vorgaben.
+            </p>
+
+            <p><strong>16 Layer, 32 Units, Batchgröße 60, 400 Epochen</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-21-56-image.png"></p>
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-23-31-image.png"></p>
+            <p><strong>10 Layer, 128 Units, Batchgröße 20, 400 Epochen</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-16-10-image.png"></p>
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:**</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-17-28-image.png"></p>
+            <p><strong>13 Layer, 32 Units, Batchgröße 32, 200 Epochen</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-08-03-image.png"></p>
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-09-41-image.png"></p>
+            <p><strong>5 Layer, 64 Units, Batchgröße 25, 200 Epochen</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-01-14-image.png"></p>
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:</strong></p>
+            <p><img alt="" src="assets/2022-06-11-14-02-19-image.png"></p>
+            <p><strong>5 Layer, 32 Units, Batchgröße 25, 100 Epochen</strong></p>
+            <p><img alt="" src="assets/2022-06-11-13-55-58-image.png"></p>
+            <p><strong>Test mit 50 neu generierten Datensätzen zur Untersuchung der Generalisierung:</strong></p>
+            <p><img alt="" src="assets/2022-06-11-13-57-33-image.png"></p>
         </div>
 
     </div>

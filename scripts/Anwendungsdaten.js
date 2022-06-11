@@ -40,16 +40,16 @@ const DOKU_TEST = "dokuTest"
  */
 const OVER_FITTED = {
     Model: {
-        units: 6,
-        layers: 7,
-        activation: 3,
-        optimizer: 3,
+        units: 48,
+        layers: 13,
+        activation: 2,
+        optimizer: 4,
         lost: 1
     },
     training: {
-        dataset: 2,
-        batchSize: 8,
-        epochs: 9
+        dataset: 5,
+        batchSize: 48,
+        epochs: 300
     }
 };
 
@@ -59,16 +59,16 @@ const OVER_FITTED = {
  *  */
 const UNDER_FITTED = {
     Model: {
-        units: 6,
-        layers: 7,
+        units: 4,
+        layers: 2,
         activation: 2,
-        optimizer: 2,
+        optimizer: 4,
         lost: 1
     },
     training: {
-        dataset: 3,
-        batchSize: 8,
-        epochs: 9
+        dataset: 5,
+        batchSize: 25,
+        epochs: 100
     }
 };
 
@@ -78,16 +78,16 @@ const UNDER_FITTED = {
  *  */
 const BEST_FITTED = {
     Model: {
-        units: 2,
-        layers: 2,
-        activation: 4,
+        units: 32,
+        layers: 13,
+        activation: 2,
         optimizer: 4,
         lost: 1
     },
     training: {
-        dataset: 4,
-        batchSize: 2,
-        epochs: 2
+        dataset: 5,
+        batchSize: 32,
+        epochs: 300
     }
 };
 
